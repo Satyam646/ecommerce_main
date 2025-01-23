@@ -8,7 +8,6 @@ const userSchema=new mongoose.Schema({
         unique:true,
         required: true,
         maxlength : 32,
-        
     },
     email:{
       type:String,
@@ -29,7 +28,8 @@ const userSchema=new mongoose.Schema({
     },
     salt:String,
     role:{
-      type:Number//0 FOR REQULAR USER,1:ADMIN
+      type:Number,//0 FOR REQULAR USER,1:ADMIN,
+      required:true
     },
     history:{
         type:Array,
@@ -46,7 +46,11 @@ userSchema.virtual('password')// this virtual field doesnot exists in our databa
     return this._password  // when want to see actual password
 });
 // now we write method encryptPassword which encrypt the actual password which we are taking from the user.
+
 userSchema.methods = {
+    // authenticate : function(plaintext){
+    //     return this.encryptPassword(plaintext)===this.hashed_password
+    // },
     encryptPassword: function(password){
         if(!password) return '';
         try{
@@ -59,4 +63,8 @@ userSchema.methods = {
         }
     }
 }
+userSchema.methods.authenticate = function(plaintext) {
+    return this.encryptPassword(plaintext) === this.hashed_password; // Compare the hashed password
+};
 module.exports = mongoose.model("User",userSchema);
+
