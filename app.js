@@ -1,5 +1,6 @@
 const express=require("express");
 const { check, validationResult } = require('express-validator');
+const cors = require('cors');
 const mongoose=require("mongoose");
 // const expressValidator=require("express-validator");
 const bodyParser=require("body-parser");  // bodyParser is used to 
@@ -20,6 +21,7 @@ mongoose.connect(process.env.DATABASE,{
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(cors()); // it enables our api to handle cross origin request
 // app.use(expressValidator()); // in newer version we donot declare expressvalidator globally.
 //routes
 // routes middle ware

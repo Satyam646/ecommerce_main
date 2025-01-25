@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Category = require("./category");
 const {ObjectId} = mongoose.Schema
 
 
@@ -31,6 +32,10 @@ const productSchema=new mongoose.Schema({
     photo: {
         data:Buffer,  //It is use to store raw binary data.
         contentType:String,
+    },
+    sold:{
+       type:Number,
+       default:0
     },
     shipping:{
      type:Boolean,

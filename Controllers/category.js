@@ -9,7 +9,6 @@ exports.categoryById =  async (req,res,next,id) =>{
               return res.status(400).json({
                 error:"Category not found"
               })
-             
         }
         req.category=category;
         next();
@@ -38,6 +37,41 @@ exports.create = async (req,res) => {
     //     res.status(500).send(error.errorResponse);
     //     }
 }
+exports.update=async (req,res)=>{
+    const category=req.category;
+    category.name=req.body.name;
+    try{
+        const updatedCategory = await category.save();
+        res.status(200).json({updatedCategory});
+    }catch(err){
+        console.log(err);
+        res.status(400).json({
+            error:err
+        })
+    }
+}
+exports.remove= async (req,res) =>{
+    try{
+       const category=req.category;
+       const result = await category.deleteOne(category)
+       return res.status(200).json({
+        message:"Category deleted successfully"
+       })
+    }catch(err){
+        error:err
+    }
+}
+exports.list= async (req,res) =>{
+    try{       
+        const category=await Category.find();
+         res.status(200).json({
+            category:category
+         })
+    }catch(err){
+        error:err
+    }
+}
 exports.read = (req,res) =>{
     res.status(200).json(req.category);
+
 }
