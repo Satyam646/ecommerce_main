@@ -13,7 +13,7 @@
         const savedUser = await user.save(); // Use await to handle the promise
         savedUser.hashed_password=undefined; // not need we to enter this use virtual password there
         savedUser.salt=undefined;
-        res.status(201).send(savedUser);
+        res.status(200).send(savedUser);
         } catch (error) {
             // error
         res.status(500).send(error.errorResponse);
