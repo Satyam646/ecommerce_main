@@ -1,11 +1,9 @@
 import React from "react";
-import { API } from "../config";
-import Box from '@mui/material/Box';
 import { Link } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import {Button ,Typography } from "@mui/material";
-import { Stack } from "@mui/material";
-import  postApi  from "../api";
+import { Stack,Select,MenuItem,InputLabel,FormControl } from "@mui/material";
+import {  postApi}  from "../api";
 import { useState } from "react";
 const Signup = () => {
     const [values,setValues] = useState({
@@ -15,13 +13,14 @@ const Signup = () => {
         error:"",
         success:false,
     });
-    const {name,email,password} = values;
+    const {name,email,password,role} = values;
     const handleSubmit = async (event)=>{
       event.preventDefault(); // prevent reload of page
       const body={
         name:name,
         email:email,
-        password:password
+        password:password,
+        role:role
       }
       const result = await postApi('signup',body);
       if(!result.ok){
@@ -63,6 +62,24 @@ const Signup = () => {
          onChange={handleChange('email')}
        />
        {/* <Typography>Password</Typography> */}
+       {/* <TextField
+         id="outlined-error"
+         label="role"
+         value={role}
+         onChange={handleChange('role')}
+       /> */}
+       <FormControl fullWidth>
+  <InputLabel id="demo-simple-select-label">role</InputLabel>
+  <Select
+    value={role}
+    label="role"
+    onChange={handleChange("role")}
+  >
+    <MenuItem value={1}>Admin</MenuItem>
+    <MenuItem value={0}>User</MenuItem>
+    
+  </Select>
+</FormControl>
        <TextField
          id="outlined-error"
          label="Password"
@@ -70,7 +87,7 @@ const Signup = () => {
          value={password}
          onChange={handleChange('password')}
        />
-       <Stack  sx={{alignSelf:"start"}}spacing={3}>
+       <Stack  sx={{alignSelf:"start"}} spacing={3}>
        <Button variant="outlined" type="submit" onClick={handleSubmit} color="success">SignUp</Button>
        <Link to="/Signin">Already a user Signin</Link>
        </Stack>

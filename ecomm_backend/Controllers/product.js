@@ -95,6 +95,7 @@ exports.userById = async (req, res, next, id) => {
 
 exports.create = (req, res) => {
     const form = new formidable.IncomingForm();
+    console.log("dhi",form);
     form.keepExtensions = true;  // Retains file extensions during parsing
     form.maxFileSize = 10 * 1024 * 1024; // Set max file size (10 MB)
 
@@ -121,7 +122,7 @@ exports.create = (req, res) => {
         category: fields.category[0],
         shipping: fields.shipping[0] === '1' // Convert to boolean
     });
-    console.log(product);
+    console.log("ff",product);
 
         // Handle the uploaded photo
         if (files.photo) {
