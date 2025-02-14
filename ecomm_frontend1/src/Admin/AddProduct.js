@@ -25,7 +25,7 @@ export default function AddProduct(){
         error:"",
         createdProduct:"",
         redirectToProfile:false,
-        formData:"",
+        formData:new FormData(),
     })
 
     const {  name,
@@ -54,7 +54,7 @@ export default function AddProduct(){
         }
         
        useEffect(()=>{
-            setValues({...values,formData : new FormData()});
+            // setValues({...values,formData : new FormData()});
             getCategories();
            
        },[])
@@ -62,8 +62,8 @@ export default function AddProduct(){
        const handleChange = (name)=>(event)=> {
         // console.log("file",event.target.files[0]);
           const value = name=='photo'? event.target?.files[0]:event.target.value;
-           formData.append(name,value);
-         setValues({...values,[name]:value});
+          formData.set(name,value);
+         setValues({...values,error:false,success:false,[name]:value});
        }
           const handleSubmit= async(e)=>{
          
@@ -88,7 +88,16 @@ export default function AddProduct(){
                   }
               }
      
-       
+       const showerror=()=>{
+               return(
+                   values.error&&<Stack sx={{bgcolor:"red",padding:"10px" , boxSizing:"border-box"}}>{values.error}</Stack>
+               )
+           }
+       const showSuccess = () =>{
+                   return (
+                       values.success==true&&<Stack sx={{bgcolor:"lightgreen",padding:"10px" , boxSizing:"border-box"}}>{createdProduct} Created Successfully</Stack>
+                   )
+               }
        const showForm = () =>{
           return(
           <form  onSubmit={handleSubmit}>
@@ -158,11 +167,9 @@ export default function AddProduct(){
 
     return (
      <Stack>
-
+     {showSuccess()}
+     {showerror()}
      {showForm()}
-
-
-
      </Stack>
     )
 } 

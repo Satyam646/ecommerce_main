@@ -45,6 +45,7 @@
 //         // }
 //     })
 // }
+const mongoose = require('mongoose');
 const Product = require("../Models/product");
 const formidable = require("formidable");
 const fs = require("fs");
@@ -348,7 +349,7 @@ exports.listBySearch = async (req, res) => {
  * as the user clicks on those checkbox and radio buttons
  * we will make api request and show the products to users based on what he wants
  */
-
+console.log(req.body);
   try{
     const product = await Product.find(findArgs).select("-photo").populate("category").sort([[sortBy,order]]).skip(skip).limit(limit)
     res.status(200).json({
@@ -360,23 +361,23 @@ exports.listBySearch = async (req, res) => {
         error:err
     });
   }
-    Product.find(findArgs)
-        .select("-photo")
-        .populate("category")
-        .sort([[sortBy, order]])
-        .skip(skip)
-        .limit(limit)
-        .exec((err, data) => {
-            if (err) {
-                return res.status(400).json({
-                    error: "Products not found"
-                });
-            }
-            res.json({
-                size: data.length,
-                data
-            });
-        });
+    // Product.find(findArgs)
+    //     .select("-photo")
+    //     .populate("category")
+    //     .sort([[sortBy, order]])
+    //     .skip(skip)
+    //     .limit(limit)
+    //     .exec((err, data) => {
+    //         if (err) {
+    //             return res.status(400).json({
+    //                 error: "Products not found"
+    //             });
+    //         }
+    //         res.json({
+    //             size: data.length,
+    //             data
+    //         });
+    //     });
 };
 
 exports.photo=(req,res,next)=>{
@@ -386,3 +387,59 @@ exports.photo=(req,res,next)=>{
     }
    next();
 }
+exports.listSearch =async (req,res)=>{
+//  we have created query object to hold search object and query object
+//  console.log("query",req.query);
+//   const query={};
+//   //asign search value to search to query.name
+//   if(req.query.search){
+//     query.name={$regex:toString(req.query.search),$options:'i'}
+//     // regex is provided by mongoose to match keywords and return result accordingly.
+//     if (req.query.category && req.query.category !== 'All') {
+//         // Check if category is a valid ObjectId
+//         if (mongoose.Types.ObjectId.isValid(req.query.category)) {
+//           query.category = req.query.category;
+//         } else {
+//           return res.status(400).json({ error: 'Invalid category ID' });
+//         }
+//       }
+//     //assign category value to query.category
+//     if(req.query.category&& req.query.category!= 'All'){
+//         query.category=toString(req.query.category);
+//     }
+
+//    try{
+//    const product= await Product.find(query).select('-photo');   // (-photo),This is use to remove photo from result because we want to remove
+//    res.status(200).json(product);  
+//    }catch(err){
+//     res.status(400).json({error:err});
+//    }
+const { category, search } = req.query;
+
+// Log the incoming parameters
+console.log('Category:', category);
+console.log('Search:', search);
+
+try {
+    // Create a query object
+    let query = {};
+
+    // If category is provided and is a valid ObjectId, add it to the query
+    if (category && mongoose.Types.ObjectId.isValid(category)) {
+        query.category = category;
+    }
+
+    // If search term is provided, add it to the query
+    if (search) {
+        query.name = { $regex: search, $options: 'i' }; // Case-insensitive search
+    }
+
+    // Perform the search
+    const products = await Product.find(query).select("-photo"); // to exclude photo
+
+    res.json(products);
+} catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+}
+  }

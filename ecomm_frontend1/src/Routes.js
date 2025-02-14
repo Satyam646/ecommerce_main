@@ -11,7 +11,8 @@ import  AdminDashboard from "./user/AdminDashboard";
 import AddCategory from "./Admin/AddCategory";
 import { AdminRoute } from "./Common/auth/adminRoute"
 import AddProduct from "./Admin/AddProduct";
-
+import Shop from "./Core/Shop/shop";
+import SingleProduct from "./Core/SingleProduct/Singleproduct";
 export default function Path() {
   const [user, setUser] = useState(null); // Initialize to null or some default value
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function Path() {
     const fetchUserRole = async () => {
       // try {
         const authenticatedUser = await JSON.parse(isAuthenticated());
-        setUser(authenticatedUser?.user.role);
+        setUser(authenticatedUser?.user?.role);
       // } catch (error) {
       //   console.error('Error fetching user role:', error);
       //   setUser(null); // Handle error case
@@ -27,12 +28,13 @@ export default function Path() {
     };
     fetchUserRole();
   }, []);
-  
+  // solve this error later that first time it is not showing that category name and user info
   return (
     <BrowserRouter>
       <Menu />
       <Routes>
         <Route path='/' element={<Home />} />
+        <Route path='/shop' element={<Shop/>} />
         <Route
           path='/Dashboard'
           element={
@@ -57,6 +59,7 @@ export default function Path() {
             </AdminRoute>
           }
         />
+        <Route path="/product/:productId" element={<SingleProduct/>} />
         <Route path='/Signin' element={<Signin />} />
         <Route path='/Signup' element={<Signup />} />
       </Routes>

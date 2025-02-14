@@ -4,9 +4,7 @@ import { Grid2, Stack, Typography} from "@mui/material";
 import { isAuthenticated } from "../Common/auth/auth";
 import Grid from '@mui/material/Grid';
 
-
 export default function AdminDashboard(){
-
     const {user} = JSON.parse(isAuthenticated());
     const LinkStyle ={
         textDecoration:"none"
@@ -16,7 +14,6 @@ export default function AdminDashboard(){
         <Stack spacing={2} sx={{ border:"2px solid grey",padding:"10px",boxSizing:"border-box",width:"50%" }}>
             <Link to="/admin/AddCategory" style={LinkStyle}>Create Category</Link>      
             <Link to='/admin/AddProduct' style={LinkStyle}>Create Product</Link>
-      
         </Stack>
         )
      }

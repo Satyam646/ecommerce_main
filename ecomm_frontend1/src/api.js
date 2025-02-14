@@ -1,11 +1,19 @@
 import { API } from "./config";
 
-
-
-
 export const getApi = (path) =>{
     return fetch(`${API}${path}`,{
         method:"GET"
+    }).then(response=>{
+        return response.json();
+    }).catch(err => console.log(err));   
+}
+export const postProductApi = (path,body) =>{
+    return fetch(`${API}${path}`,{
+        method:"POST",
+        headers: {
+            "Content-Type": "application/json" // Add this line
+        },
+        body:JSON.stringify(body)
     }).then(response=>{
         return response.json();
     }).catch(err => console.log(err));   
