@@ -6,9 +6,7 @@ import { signout } from "../../Common/auth/auth";
 // import { Typography } from "@mui/material";
 import { useLocation,useNavigate } from "react-router-dom";
 import { isAuthenticated } from "../../Common/auth/auth";
-
-
-
+import { itemTotal } from "../Cart/AddItem";
 export default function Menu(){
   const navigate = useNavigate();
   //  const jwt=localStorage.getItem("jwt");
@@ -31,6 +29,7 @@ export default function Menu(){
        {<Stack sx={{bgcolor:isActive(location,"/Dashboard")}}><Link to="/Dashboard" style={LinkStyle}>Dashboard</Link></Stack>}
        <Stack sx={{bgcolor:isActive(location,"/")}}><Link to="/" style={LinkStyle}>Home</Link></Stack>
        <Stack sx={{bgcolor:isActive(location,"/shop")}}><Link to="/shop" style={LinkStyle}>Shop</Link></Stack>
+       <Stack sx={{bgcolor:isActive(location,"/Cart")}}><Link to="/Cart" style={LinkStyle}>Cart<sup>{itemTotal()}</sup></Link></Stack>
        {isAuthenticated()&&<Stack sx={{bgcolor:'red', cursor:"pointer"}}  onClick={()=>{signout(navigate)}}>signout</Stack>}
       </Stack>
     )

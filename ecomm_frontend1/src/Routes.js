@@ -13,6 +13,7 @@ import { AdminRoute } from "./Common/auth/adminRoute"
 import AddProduct from "./Admin/AddProduct";
 import Shop from "./Core/Shop/shop";
 import SingleProduct from "./Core/SingleProduct/Singleproduct";
+import Cart from "./Core/Cart/Cart";
 export default function Path() {
   const [user, setUser] = useState(null); // Initialize to null or some default value
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function Path() {
             </AdminRoute>
           }
         />
+        <Route path="/Cart" element={<Cart/>} />
         <Route path="/product/:productId" element={<SingleProduct/>} />
         <Route path='/Signin' element={<Signin />} />
         <Route path='/Signup' element={<Signup />} />
