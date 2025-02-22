@@ -29,6 +29,7 @@ const userSchema=new mongoose.Schema({
     salt:String,
     role:{
       type:Number,//0 FOR REQULAR USER,1:ADMIN,
+    //  required:true
     },
     history:{
         type:Array,
