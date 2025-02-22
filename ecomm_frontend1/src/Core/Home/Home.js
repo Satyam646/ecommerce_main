@@ -2,9 +2,12 @@ import React, { useEffect,useState } from "react"
 import { getApi } from "../../api"
 import  Grid  from "@mui/material/Grid2";
 import {Stack,Button,Select,MenuItem,TextField, FormControl, InputLabel} from "@mui/material"
+import { useNavigate } from "react-router-dom"; 
+import SearchIcon from '@mui/icons-material/Search';
 // import queryString from 'query-string';
 import Card from "./Cards"
 export default function Home(){
+    const navigate=useNavigate();
     const [values,setValues] = useState({
         productsByArrival:[{}],
         productBySell:[{}],
@@ -76,12 +79,13 @@ export default function Home(){
    },[])
    const SearchBar=()=>{
          return(
-         <Stack direction="row" alignSelf="center"  >
+         
             <form onSubmit={getSearchData}>
+                <Stack direction="row" alignItems="center" justifyContent="flex-end"  >
             {/* <Stack> */}
-            <FormControl sx={{width:"100px"}}>
-                <InputLabel>Select </InputLabel>
-         <Select
+            {/* <FormControl sx={{width:"100px"}}>
+                <InputLabel>Select </InputLabel> */}
+         {/* <Select
                value={selectedCategory}
                label="Select"
                onChange={handleCategory}
@@ -89,16 +93,19 @@ export default function Home(){
         {categories?.map((data,indx)=>
          (<MenuItem key={indx} value={data?._id}>{data?.name}</MenuItem>)
         )}
-        </Select>
-        </FormControl>
+        </Select> */}
+        {/* </FormControl> */}
         {/* </Stack> */}
          <TextField  
-           label="Search"
+           variant="standard"
+        //    label="Search"
+           placeholder="search"
            value={searchData}
            onChange={handleSearch} />
-           <Button variant="" type="submit">Search</Button>
+           <Button variant="" type="submit"><SearchIcon /></Button>
+           </Stack>
            </form>
-         </Stack>
+     
          )
      }
     // console.log("products detail",values?.product);

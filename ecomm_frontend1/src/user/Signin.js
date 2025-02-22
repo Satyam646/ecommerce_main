@@ -1,12 +1,15 @@
 import React from "react";
 import TextField from '@mui/material/TextField';
-import {Button ,Typography } from "@mui/material";
+import {Box, Button ,Typography } from "@mui/material";
 import { Stack } from "@mui/material";
+import  Grid from "@mui/material/Grid2";
 import { postApi }   from "../api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authentication } from "../Common/auth/auth"; 
 import "../Common/Loader.css"
+// import {bookBecho} from "../image/bookBecho.png"
+import bookBecho from "../Image/BookBecho.png"
 export default function Signin(){
     const navigate=useNavigate();
     const [values,setValues] = useState({
@@ -46,17 +49,17 @@ export default function Signin(){
             values.error&&<Stack sx={{bgcolor:"red" ,padding:"20px", boxSizing:"border-box"}}>{values.error}</Stack>
              )
     }
-    const showForm = () =>(
-        <form >
-        <Stack spacing ={3}>
-        {/* <Typography>Email</Typography> */}
-         <TextField
+    const showForm = () =>{ 
+          return (
+           <Box>
+            <form >
+            <Stack spacing={5} >
+            <TextField
          id="outlined-error"
          label="Email"
          value={email}
          onChange={handleChange('email')}
        />
-       {/* <Typography>Password</Typography> */}
        <TextField
          id="outlined-error"
          label="Password"
@@ -64,18 +67,35 @@ export default function Signin(){
          value={password}
          onChange={handleChange('password')}
        />
-       <Stack  sx={{alignSelf:"start"}} spacing={3}>
+       {/* </Stack> */}
+       {/* <Stack  sx={{alignSelf:"start"}}> */}
        <Button variant="outlined" type="submit" onClick={handleSubmit} color="success">Signin</Button>
-       </Stack>
+        {/* <Typography>Email</Typography> */}
+        
+       {/* <Typography>Password</Typography> */}
        </Stack>
        </form>
+       </Box>
     )
+  }
     return (
-        
-         <Stack sx={{padding:"150px", boxSizing:"border-box"}} spacing={2}>
+         <Stack sx={{padding:"50px" ,bgcolor:"#CAFBFF"}} spacing={2}>
          {values.loading&&(<Stack className="loading">Loading</Stack>)}
-        {showError()}
-        {showForm()}
+        
+        
+        <Grid container spacing={2} alignItems="center">
+            <Grid size={6} > 
+              <Stack spacing={1}>
+            {showError()}
+            {showForm()}
+            </Stack>
+       
+       
+       </Grid>
+        <Grid size={6}>
+              <img src={bookBecho} alt="/" width="100%" /> 
+        </Grid>
+          </Grid>
         </Stack>
     )
 }

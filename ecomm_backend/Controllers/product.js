@@ -55,7 +55,7 @@ const _ = require("lodash");
 
 exports.productById= async (req,res,next,id)=>{
         try{
-            const  product=await Product.findById(id);
+            const  product=await Product.findById(id).populate("category");
             if(!product){
                 return res.status(400).json({
                     error: "Product not found"
@@ -407,7 +407,6 @@ exports.listSearch =async (req,res)=>{
 //     if(req.query.category&& req.query.category!= 'All'){
 //         query.category=toString(req.query.category);
 //     }
-
 //    try{
 //    const product= await Product.find(query).select('-photo');   // (-photo),This is use to remove photo from result because we want to remove
 //    res.status(200).json(product);  
@@ -415,31 +414,25 @@ exports.listSearch =async (req,res)=>{
 //     res.status(400).json({error:err});
 //    }
 const { category, search } = req.query;
-
 // Log the incoming parameters
 console.log('Category:', category);
 console.log('Search:', search);
-
 try {
     // Create a query object
     let query = {};
-
     // If category is provided and is a valid ObjectId, add it to the query
     if (category && mongoose.Types.ObjectId.isValid(category)) {
         query.category = category;
     }
-
     // If search term is provided, add it to the query
     if (search) {
         query.name = { $regex: search, $options: 'i' }; // Case-insensitive search
     }
-
     // Perform the search
     const products = await Product.find(query).select("-photo"); // to exclude photo
-
     res.json(products);
-} catch (error) {
+}catch (error) {
     console.error(error);
     res.status(500).send('Server error');
 }
-  }
+}

@@ -38,3 +38,31 @@ export const getProductOnCart = () =>{
     }
     return [];
 }
+export const updateItemCount = (id,value) =>{  
+    if( typeof window !== "undefined"){
+        if(localStorage.getItem("cart")){
+            const cart=JSON.parse(localStorage.getItem("cart"));
+            cart.map((products,i)=>{
+                if(products._id==id){
+                    cart[i].count=value;
+                }
+        })
+        localStorage.setItem('cart',JSON.stringify(cart));
+        }
+    }
+    // return [];
+}
+export const removeItemFromCart = (id) =>{
+     let cart=[];
+       if( typeof window !== "undefined" ){
+        if(localStorage.getItem("cart")){
+             cart = JSON.parse(localStorage.getItem("cart"));
+             cart.map((products,i)=>{
+                if(products._id==id){
+                    cart.splice(i,1);
+                }})
+            localStorage.setItem("cart",JSON.stringify(cart));
+        }
+       }
+       return cart;
+}
