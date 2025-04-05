@@ -16,8 +16,8 @@ const orders = require('./routes/order')
 const app=express();
 //To connect the database.
 mongoose.connect(process.env.DATABASE,{
-         useNewUrlParser:true,
-         useUnifiedTopology: true
+         // useNewUrlParser:true,
+         // useUnifiedTopology: true
 }).then(()=>console.log("database is connected now"))
 //middleware
 app.use(morgan('dev'));
