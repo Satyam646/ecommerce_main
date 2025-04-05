@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authentication } from "../Common/auth/auth"; 
 import "../Common/Loader.css"
+import { Link } from "react-router-dom";
 // import {bookBecho} from "../image/bookBecho.png"
 import bookBecho from "../Image/BookBecho.png"
 export default function Signin(){
@@ -70,6 +71,7 @@ export default function Signin(){
        {/* </Stack> */}
        {/* <Stack  sx={{alignSelf:"start"}}> */}
        <Button variant="outlined" type="submit" onClick={handleSubmit} color="success">Signin</Button>
+       <Stack>Not Registered with us  <Link to="/Signup">SignIn</Link> </Stack>
         {/* <Typography>Email</Typography> */}
         
        {/* <Typography>Password</Typography> */}
@@ -79,7 +81,7 @@ export default function Signin(){
     )
   }
     return (
-         <Stack sx={{padding:"50px" ,bgcolor:"#CAFBFF"}} spacing={2}>
+         <Stack height="70vh"sx={{padding:"50px" ,bgcolor:"#CAFBFF"}} spacing={2}>
          {values.loading&&(<Stack className="loading">Loading</Stack>)}
         
         
@@ -93,7 +95,7 @@ export default function Signin(){
        
        </Grid>
         <Grid size={6}>
-              <img src={bookBecho} alt="/" width="100%" /> 
+              <img src={bookBecho} alt="/" height="400px" width="100%" /> 
         </Grid>
           </Grid>
         </Stack>

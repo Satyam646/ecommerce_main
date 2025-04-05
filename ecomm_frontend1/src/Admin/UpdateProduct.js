@@ -5,18 +5,23 @@ import { Stack ,MenuItem,Select,InputLabel,FormControl} from "@mui/material";
 import { useState } from "react";
 import { postAuthApi } from "../api";
 import { isAuthenticated } from "../Common/auth/auth";
-import { postFormData } from "../api";
+import { putFormData } from "../api";
 import { getApi } from "../api";
+import { getSingleProduct } from "./Adminapi";
+import { useLocation } from "react-router-dom";
 
-
-
-export default function AddProduct(){
+export default function UpdateProduct(){
     const { user,token } = isAuthenticated();
+    const [product,setproduct] = useState();
+    const location = useLocation();
+    
+    const ProductId = location?.pathname.split("/")[4];
+    console.log("pathname",ProductId);
+    const [categories,setCategories] = useState([]);
     const [values,setValues] = useState({
         name:"",
         description:"",
         price:"",
-        categories:[],
         category:"",
         shipping:"",
         quantity:"",
@@ -30,7 +35,6 @@ export default function AddProduct(){
     const {  name,
         description,
         price,
-        categories,
         category,
         shipping,
         quantity,
@@ -41,23 +45,44 @@ export default function AddProduct(){
         formData
     }=values;
         
-       
+        const getProduct=()=>{
+            getSingleProduct(ProductId).then(data=>{
+                if(data?.error){
+                    console.log("error occured try again");
+                }else{
+                //    setproduct(data);
+                formData.set("name",data?.name);
+                formData.set("description",data?.description);
+                formData.set("price",data?.price);
+                formData.set("category",data?.category?._id);
+                formData.set("shipping",data?.shipping?1:0);
+                formData.set("quantity",data?.quantity);
+                // formData.set(name,data.name);
+                // formData.set(name,data.name);
+                // formData.set(name,data.name);
+                // formData.set(name,data.name);
+                setValues({...values,name:data?.name,description:data?.description,price:data?.price,category:data?.category?._id,shipping:data?.shipping?1:0,quantity:data?.quantity})
+                }
+            })
+        }
         const getCategories =()=>{
             getApi("category").then(data=>{
                 if(data?.error){
                    setValues({...values,error:data?.error});
                 }else{
-                    setValues({...values,categories:data?.category});
+                    console.log("data",data);
+                    setCategories(data?.category);
                 }
             })
         }
-        
        useEffect(()=>{
             // setValues({...values,formData : new FormData()});
             getCategories();
+            getProduct();
            
        },[])
-       console.log(values?.categories);
+       console.log("categories",values?.categories);
+       console.log("category",values?.category);
        const handleChange = (name)=>(event)=> {
         // console.log("file",event.target.files[0]);
         const value = name=='photo'? event.target?.files[0]:event.target.value;
@@ -68,6 +93,7 @@ export default function AddProduct(){
          
             console.log("hello",e);
                   e.preventDefault();
+                  console.log("value",formData);
                   for (let [key, value] of formData.entries()) {
                     console.log(key, value);
                   }
@@ -76,7 +102,7 @@ export default function AddProduct(){
                   const userId=localStorage.getItem("userId");
                
                   const token=JSON.parse(isAuthenticated()).token
-                   const result = await postFormData(`product/create/${userId}`,formData,token);
+                   const result = await putFormData(`product/update/${userId}/${ProductId}`,formData,token);
                 //   console.log(result);  
                 const res=await result.json(); 
                   if(!result.ok){
@@ -94,7 +120,7 @@ export default function AddProduct(){
            }
        const showSuccess = () =>{
                    return (
-                       values.success==true&&<Stack sx={{bgcolor:"lightgreen",padding:"10px" , boxSizing:"border-box"}}>{createdProduct} Added Successfully</Stack>
+                       values.success==true&&<Stack sx={{bgcolor:"lightgreen",padding:"10px" , boxSizing:"border-box"}}>{createdProduct} Product Updated Successfully!!</Stack>
                    )
                }
        const showForm = () =>{
@@ -115,7 +141,7 @@ export default function AddProduct(){
            required
            onChange={handleChange('name')}
          />
-         <Input  multiline  onChange={handleChange("description")}  placeholder="Add Product Description..." />
+         <Input  multiline value={values?.description} onChange={handleChange("description")}  placeholder="Add Product Description..." />
          <TextField
            id="outlined-error"
            label="price"
@@ -156,7 +182,7 @@ export default function AddProduct(){
     </FormControl>
          {/* <Typography>Password</Typography> */}
          <Stack  sx={{alignSelf:"start"}} spacing={3}>
-         <Button variant="outlined" type="submit" color="success">Create Product</Button>
+         <Button variant="outlined" type="submit" color="success">Update Product</Button>
          </Stack>
          </Stack>
          </form>

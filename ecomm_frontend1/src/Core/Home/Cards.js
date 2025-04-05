@@ -5,7 +5,11 @@ import {useNavigate} from "react-router-dom"
 import { AddItem } from "../Cart/AddItem";
 import { updateItemCount } from "../Cart/AddItem";
 import { removeItemFromCart } from "../Cart/AddItem";
+import { useContext } from "react";
+import { ThemeContext } from '../../Common/ThemeContext/ThemeContext';
+
 export default function Card({product,onCart=true,UpdateCart}){
+    const {toggleSnackBar} = useContext(ThemeContext)
     const navigate = useNavigate();
     const path=`${API}product/photo/${product?._id}`;
     const [count,setCount] = useState(product?.count);
@@ -25,7 +29,7 @@ export default function Card({product,onCart=true,UpdateCart}){
     
     <Stack sx={{bgcolor:"#EEEEEE", cursor:"pointer", borderRadius:"10px"}}  >
         <Stack sx={{padding:"20px"}}>
-        <img src={path}  alt="/" style={{borderRadius:"10px"}}/>
+        <img src={path}  alt="/" height="300px" style={{borderRadius:"10px"}}/>
         </Stack>
         {/* <hr/> */}
         <Stack sx={{padding:"0px 20px 20px 20px"}} spacing={0.5}>
@@ -53,10 +57,11 @@ export default function Card({product,onCart=true,UpdateCart}){
         /></Stack>}
         <Stack direction="row" spacing={1}>
         <Button variant="outlined" onClick={()=>{navigate(`/product/${product?._id}`)}}>View Product</Button>
-         {onCart&&<Button variant="outlined" onClick={()=>{
+         {onCart&&<Button variant="outlined" color="success" onClick={()=>{
           AddItem(product);
+          toggleSnackBar(true,"Product Added to cart succesfully")
         }}>Add to Cart</Button>}
-        {onCart==false&&<Button variant="outlined" onClick={()=>{
+        {onCart==false&&<Button variant="outlined" color="error" onClick={()=>{
           removeItemFromCart(product?._id);
           UpdateCart();
         }}>Remove Item</Button>}
