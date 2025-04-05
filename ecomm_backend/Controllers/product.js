@@ -46,7 +46,9 @@
 //     })
 // }
 const mongoose = require('mongoose');
+
 const Product = require("../Models/product");
+const User=require("../Models/users");
 const formidable = require("formidable");
 const fs = require("fs");
 const _ = require("lodash");
@@ -74,23 +76,23 @@ exports.read=(req,res)=>{
     req.product.photo=undefined //we currently do not send the photo weseperately send photo.
     return res.status(200).json(req.product);
 }
-exports.userById = async (req, res, next, id) => {
-    try {
-        const user = await User.findById(id);
+// exports.userById = async (req, res, next, id) => {
+//     try {
+//         const user = await User.findById(id);
         
-        if (!user) {
-            return res.status(400).json({
-                error: "User not found"
-            });
-        }
-        req.profile = user;
-        next(); // Continue to the next middleware
-    } catch (err) {
-        return res.status(400).json({
-            error: "Error fetching user"
-        });
-    }
-};
+//         if (!user) {
+//             return res.status(400).json({
+//                 error: "User not found"
+//             });
+//         }
+//         req.profile = user;
+//         next(); // Continue to the next middleware
+//     } catch (err) {
+//         return res.status(400).json({
+//             error: "Error fetching user"
+//         });
+//     }
+// };
 
 
 
@@ -192,6 +194,7 @@ exports.remove = async (req, res) => {
             message: "Product deleted successfully"
         });
     } catch (err) {
+        console.log(err);
         console.error('Error occurred while deleting product:', err); // Log the error for debugging
         res.status(400).json({
             error: "Error occurred while deleting the product",
@@ -212,11 +215,11 @@ exports.update = (req, res) => {
         // Create a new product instance
     console.log('Fields:', fields);
     console.log('Files:', files);
-    if(!fields.name[0]||!fields.description[0]||!fields.price[0]||!fields.quantity[0]||!fields.category[0]||!fields.shipping[0]){
-        return res.status(400).json({
-            error:"fields are missing"
-        })
-    }
+    // if(!fields.name[0]||!fields.description[0]||!fields.price[0]||!fields.quantity[0]||!fields.category[0]||!fields.shipping[0]){
+    //     return res.status(400).json({
+    //         error:"fields are missing"
+    //     })
+    // }
     // const product = new Product({
     //     name: fields.name[0], // Access the first element of the array
     //     description: fields.description[0],
@@ -226,12 +229,12 @@ exports.update = (req, res) => {
     //     shipping: fields.shipping[0] === '1' // Convert to boolean
     // });
     let data={
-            name: fields.name[0], // Access the first element of the array
-            description: fields.description[0],
-            price: Number(fields.price[0]), // Convert to number
-            quantity: Number(fields.quantity[0]),
-            category: fields.category[0],
-            shipping: fields.shipping[0] === '1' // Convert to boolean
+            name: fields?.name[0], // Access the first element of the array
+            description: fields?.description[0],
+            price: Number(fields?.price[0]), // Convert to number
+            quantity: Number(fields?.quantity[0]),
+            category: fields?.category[0],
+            shipping: fields?.shipping[0] === '1' // Convert to boolean
         }
     let product = req.product;
     product = _.extend(product, data);
@@ -265,7 +268,7 @@ exports.update = (req, res) => {
 exports.list = async (req,res) => {
     let order = req.query.order ? req.query.order: 'asc'; // order into ascending or descending.
     let sortBy= req.query.sortBy ? req.query.sortBy: '_id'; // use to sort it by any parameter.
-    let limit = req.query.limit ? parseInt(req.query.limit): 4; // use to limit the result.
+    let limit = req.query.limit ? parseInt(req.query.limit): 8; // use to limit the result.
     try{
     const product = await Product.find().select('-photo').populate('category').sort([[sortBy, order]]).limit(limit)
     // if(!product){
@@ -436,3 +439,56 @@ try {
     res.status(500).send('Server error');
 }
 }
+// exports.decreaseQuantity = (req,res,next) =>{
+//     let bulkOps= req.body.products.map(item=>{
+//         return {
+//                updateOne: {
+//                 filter:{ _id:item._id},
+//                 update:{$inc:{quantity:-item.count, sold: +item.count}} //Inc means include. -item count means decrease quantity by item.count
+//                }
+//         };
+//     });
+//     Product.bulkWrite(bulkOps,{},(error,products)=>{ 
+//         //bulk write enables bulk update in mongoose model actually when we have to update more then one thing in in one query we use that 
+//         if(error){
+//             return res.status(400).json({
+//                  error:"Could not update product"
+//             });
+//         }
+//         next();
+//     })
+//     };
+exports.decreaseQuantity = async (req, res, next) => {
+    try {
+        // Prepare the bulk operations
+        const bulkOps = req.body.products.map(item => {
+            console.log(item);
+            return {
+                updateOne: {
+                    filter: { _id: item._id },
+                    update: {
+                        $inc: { quantity: -item.count, sold: item.count } // Decrease quantity and increase sold
+                    }
+                }
+            };
+        });
+
+        // Perform the bulk write operation using async/await
+        const result = await Product.bulkWrite(bulkOps);
+        console.log("resss",result);
+        // Check if any documents were modified
+        if (result.modifiedCount === 0) {
+            return res.status(400).json({
+                error: "No products were updated"
+            });
+        }
+
+        // Proceed to the next middleware if successful
+        next();
+    } catch (error) {
+        return res.status(400).json({
+            error: "Could not update products"
+        });
+    }
+};
+

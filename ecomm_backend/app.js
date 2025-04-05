@@ -11,6 +11,8 @@ const  authrouter =require("./routes/auth");
 const  userrouter=require("./routes/user");
 const  productRoutes=require("./routes/product");
 const  categoryRoutes=require("./routes/category");
+const  brainTreeRoutes = require("./routes/Braintree");
+const orders = require('./routes/order')
 const app=express();
 //To connect the database.
 mongoose.connect(process.env.DATABASE,{
@@ -29,6 +31,8 @@ app.use('/',authrouter);// this will be prefix for all the router inside the rou
 app.use('/',userrouter);
 app.use('/',categoryRoutes);
 app.use('/',productRoutes);
+app.use("/",brainTreeRoutes);
+app.use("/",orders);
 const port=process.env.PORT||8000;
 app.listen(port,()=>{
     console.log(`server is running on port ${port}`);

@@ -69,7 +69,7 @@ const AddCategory = ()=>{
        </form>
     )}
    return (
-    <Stack>
+    <Stack height="70vh">
     {showSuccess()}
     {showerror()}
     {showForm()}

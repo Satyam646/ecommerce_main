@@ -1,5 +1,5 @@
 import React, { useEffect,useState } from "react"
-import { Stack } from "@mui/material"
+import { Stack, TextField } from "@mui/material"
 import Grid from "@mui/material/Grid2"
 import { getApi } from "../../api"
 import CheckBox from "./CheckBox"
@@ -7,9 +7,12 @@ import RadioBox from "./RadioBox"
 import { prices }  from "./Prices"
 import { postProductApi } from "../../api"
 import Cards from "../Home/Cards"
-
-
+import { useContext } from 'react';
+import Alert from '@mui/material/Alert';
+import { ThemeContext } from '../../Common/ThemeContext/ThemeContext';
+import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
 export default function Shop(){
+    const { SnackBar, toggleSnackBar } = useContext(ThemeContext)
         const [values,setValues] =  useState({
             categories:[{}],
             error:""
@@ -43,6 +46,26 @@ export default function Shop(){
                         }
                     })
     }
+        const showSnackBar = () => {
+                 return (
+                     <Snackbar
+                         anchorOrigin={{ vertical: 'top', horizontal: "right" }}
+                         autoHideDuration={3000}
+                         open={SnackBar?.open}
+                         // message={SnackBar.message}
+                         onClose={() => { toggleSnackBar(false, "") }}
+                     >
+                         <Alert
+                             onClose={() => { toggleSnackBar(false, "") }}
+                             severity="success"
+                             variant="filled"
+                             sx={{ width: '100%' }}
+                         >
+                             {SnackBar.message}
+                         </Alert>
+                     </Snackbar>
+                 )
+             }
      const getProductByFilters= ()=>{
            const body ={
             limit:6,
@@ -58,6 +81,7 @@ export default function Shop(){
                              }
                          })
             }
+
     useEffect(()=>{
         getProductByFilters();
     },[myfilter])
@@ -67,16 +91,21 @@ export default function Shop(){
     return (
         <Stack>
            <Grid container spacing={1}>
-            <Grid size={2}>
+            <Grid size={2} >
+               <Stack sx={{marginTop:"100px"}}>
               <CheckBox categories={values?.categories} handleFilters={handleFilters} />
               <RadioBox prices={prices} handleFilters={handleFilters} />
+              </Stack>
             </Grid>
             <Grid size={10}>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} sx={{marginTop:"30px"}}>
+                {/* <Stack sx={{marginTop:"20px"}}> */}
               {products.map((product)=>(<Grid size={3}><Cards product={product} /> </Grid>))}
+              {/* </Stack> */}
               </Grid>
             </Grid>
            </Grid>
+           {showSnackBar()}
         </Stack>
     )
 

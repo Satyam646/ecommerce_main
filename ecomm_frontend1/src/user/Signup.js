@@ -77,7 +77,6 @@ const Signup = () => {
   >
     <MenuItem value={1}>Admin</MenuItem>
     <MenuItem value={0}>User</MenuItem>
-    
   </Select>
 </FormControl>
        <TextField
@@ -95,7 +94,7 @@ const Signup = () => {
        </form>
     )
     return (
-         <Stack sx={{padding:"150px", boxSizing:"border-box"}} spacing={2}>
+         <Stack height="70vh" sx={{padding:"20px",boxSizing:"border-box"}} spacing={2}>
         {showSuccess()}
         {showError()}
         {showForm()}

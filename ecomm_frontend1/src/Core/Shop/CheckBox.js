@@ -21,7 +21,7 @@ export default function CheckBox({categories,handleFilters}){
    return(
     <Stack>
     <FormGroup>
-    <Stack>Please Select Categories</Stack>
+    <Stack>Filter By Categories</Stack>
     {categories?.map((c,indx)=>(
         <FormControlLabel control={<Checkbox onChange={handleChange} value={c._id}/>}   label={c.name} />
     )  
