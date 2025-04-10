@@ -72,7 +72,7 @@ export default function AdminDashboard() {
                         <ListItemIcon>
                             <ManageHistoryIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Manage Orders" sx={{}} />
+                        <ListItemText primary="Update Products" sx={{}} />
                     </ListItem>
                     <ListItem button onClick={()=>{signout(Navigate)}} >
                         <ListItemIcon>

@@ -106,7 +106,15 @@ export default function Path() {
             </PrivateRoute>
           }
         />
-        <Route path="/Cart" element={<Cart/>} />
+         <Route
+          path='/Cart'
+          element={
+            <PrivateRoute>
+             <Cart/> 
+            </PrivateRoute>
+          }
+        />
+        {/* <Route path="/Cart" element={<Cart/>} /> */}
         <Route path="/product/:productId" element={<SingleProduct/>} />
         <Route path="/product/:productId" element={<SingleProduct/>} />
         <Route path='/signin' element={<Signin />} />
