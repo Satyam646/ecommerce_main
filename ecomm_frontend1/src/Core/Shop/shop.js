@@ -89,7 +89,7 @@ export default function Shop(){
         getCategories();
     },[])
     return (
-        <Stack>
+        <Stack >
            <Grid container spacing={1}>
             <Grid size={2} >
                <Stack sx={{marginTop:"100px"}}>

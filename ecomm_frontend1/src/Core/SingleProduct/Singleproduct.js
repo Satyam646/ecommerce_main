@@ -121,10 +121,9 @@ export default function SingleProduct(){
         {/* {JSON.stringify(values?.product)} */}
         {showForm()}
         <Stack>
-         <Typography variant="h4" sx={{textAlign:"center"}}>Related books</Typography>
-         
+        {relatedProduct.length>0&&<Typography variant="h4" sx={{textAlign:"center"}}>Related books</Typography> }
         {showRelatedProduct()}
-         {showSnackBar()}
+        {showSnackBar()}
         </Stack>
         </Stack>
     )

@@ -82,7 +82,19 @@ export default function Signin(){
   }
     return (
          <Stack height="70vh"sx={{padding:"50px" ,bgcolor:"#CAFBFF"}} spacing={2}>
-         {values.loading&&(<Stack className="loading">Loading</Stack>)}
+       {values.loading && (
+    <div className="loader-overlay">
+      <div className="gradient-spinner">
+        <div className="gradient-spinner-inner"></div>
+      </div>
+      
+      <div className="particles-container">
+        {[...Array(12)].map((_, i) => (
+          <div key={i} className="particle"></div>
+        ))}
+      </div>
+    </div>
+  )}
         
         
         <Grid container spacing={2} alignItems="center">
