@@ -1,12 +1,9 @@
 import React from "react"
-import {Link, } from 'react-router-dom' // link is used to avoid reloading a page as href relods the page withRouter used to 
+import {Link} from 'react-router-dom' // link is used to avoid reloading a page as href relods the page withRouter used to 
 import Stack from '@mui/material/Stack';
 import "./Menu.css"
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import IconButton from '@mui/material/IconButton';
-import { signout } from "../../Common/auth/auth";
 import { ThemeContext } from '../../Common/ThemeContext/ThemeContext';
-// import { Typography } from "@mui/material";
 import bookBecho  from "../../Image/BookBecho.png"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useLocation,useNavigate } from "react-router-dom";
@@ -15,7 +12,7 @@ import { isAuthenticated } from "../../Common/auth/auth";
 import {Button,TextField} from "@mui/material"
 import { useContext } from 'react';
 import { itemTotal } from "../Cart/AddItem";
-import { Typography } from "@mui/material";
+import { Typography,Box,Badge ,InputAdornment} from "@mui/material";
 import { getApi } from "../../api"
 export default function Menu(){
   const {SnackBar,toggleSnackBar,setSearchData,searchData,searchedProduct,setsearchedProduct,searched,setSearched} = useContext(ThemeContext)
@@ -30,7 +27,7 @@ export default function Menu(){
            if(location.pathname===path){
             return "white"
            }else{
-            return ""
+            return "grey"
            }
     }
     const handleSearch=(event)=>{
@@ -39,74 +36,157 @@ export default function Menu(){
       getSearchData(event.target.value);
   }
     const getSearchData=(e)=>{
-      // e.preventDefault();
       setSearched(true);
       const query={search:searchData}
       const queryString = new URLSearchParams(query).toString();
       getApi(`searchBy?${queryString}`).then(data=>{
           if(data?.error){
-            //  setValues({...values,error:data?.error});
           }
           else {
             setsearchedProduct(data);
           }
       })
      }
-  const SearchBar=()=>{
-    return(
-    
-       <form onSubmit={getSearchData}>
-           <Stack direction="row" alignItems="center" justifyContent="flex-end"  >
-       {/* <Stack> */}
-       {/* <FormControl sx={{width:"100px"}}>
-           <InputLabel>Select </InputLabel> */}
-    {/* <Select
-          value={selectedCategory}
-          label="Select"
-          onChange={handleCategory}
-    >
-   {categories?.map((data,indx)=>
-    (<MenuItem key={indx} value={data?._id}>{data?.name}</MenuItem>)
-   )}
-   </Select> */}
-   {/* </FormControl> */}
-   {/* </Stack> */}
-    <TextField  
-      sx={{color:"white",input: { color: 'white' }}}
-      variant="standard"
-      size="small"
-   //    label="Search"
-      placeholder="search"
-      value={searchData}
-      onChange={handleSearch} />
-      <Button variant="" type="submit"><SearchIcon sx={{color:"white"}}/></Button>
+const SearchBar = () => {
+  return (
+    <form onSubmit={getSearchData} style={{ width: '100%' }}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="flex-end"
+        spacing={1}
+        sx={{ maxWidth: { xs: '100%', md: '300px' }, width: '100%' }}
+      >
+        <TextField
+          variant="outlined"
+          size="small"
+          placeholder="Search books..."
+          value={searchData}
+          onChange={handleSearch}
+          InputProps={{
+            sx: {
+              borderRadius: '20px',
+              bgcolor: 'rgba(255, 255, 255, 0.1)',
+              color: 'white',
+              '& .MuiInputBase-input': { color: 'white', pl: 2 },
+              '& fieldset': { border: 'none' },
+            },
+            endAdornment: (
+              <InputAdornment position="end">
+                <Button
+                  type="submit"
+                  sx={{
+                    minWidth: '0',
+                    p: 0,
+                    color: 'white',
+                    '&:hover': { bgcolor: 'transparent' },
+                  }}
+                >
+                  <SearchIcon />
+                </Button>
+              </InputAdornment>
+            ),
+          }}
+        />
       </Stack>
-      </form>
-
-    )
-}
+    </form>
+  );
+};
  const user=JSON.parse(isAuthenticated())?.user?.role;
     return (
-      <Stack   direction="row"  alignItems="center"  justifyContent="space-between" sx={{height:"10vh",bgcolor:"#333B6A", padding:"20px 20px 0px 10px",boxSizing:"border-box",position: "sticky",
-        top: 0 }} >
-        <Stack direction="row" spacing={5} alignItems="center">
-        <Stack>
-        <img src={bookBecho} alt="/" height="30px" width="90px" />
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1300,
+          backdropFilter: 'blur(10px)',
+          backgroundColor: 'rgba(51, 59, 106, 0.9)',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.3)',
+          p: { xs: '10px 15px', md: '15px 40px' },
+        }}
+      >
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          flexWrap="wrap"
+        >
+          {/* Logo and Nav */}
+          <Stack direction="row" alignItems="center" spacing={4} sx={{ flexWrap: 'wrap' }}>
+            <Box component="img" src={bookBecho} alt="BookBecho" sx={{ height: 40, width: 120 }} />
+  
+            <Stack direction="row" spacing={3}>
+              {[
+                { label: 'Home', path: '/' },
+                { label: 'Shop', path: '/shop' },
+              ].map((link) => (
+                <Link key={link.path} to={link.path} style={LinkStyle}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      position: 'relative',
+                      
+                      color: isActive(location, link.path),
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        width: isActive(location, link.path)=="white" ? '100%' : '0%',
+                        height: '2px',
+                        bottom: '-3px',
+                        left: '0',
+                        bgcolor: 'white',
+                        transition: 'all 0.3s ease-in-out',
+                      },
+                      '&:hover::after': {
+                        width: '100%',
+                      },
+                    }}
+                  >
+                    {link.label}
+                  </Typography>
+                </Link>
+              ))}
+            </Stack>
+          </Stack>
+  
+          {/* Search, Cart, Account */}
+          <Stack direction="row" spacing={2} alignItems="center" mt={{ xs: 1, md: 0 }}>
+            {SearchBar()}
+            <Link to="/Cart" style={LinkStyle}>
+              <Badge badgeContent={itemTotal()} color="error">
+                <ShoppingCartIcon
+                  sx={{
+                    color: isActive(location, '/Cart')=="white"?"white":"grey",
+                    // bgcolor:isActive(location, '/Cart'),
+                    fontSize: 28,
+                    transition: 'transform 0.2s ease',
+                    '&:hover': { transform: 'scale(1.2)' },
+                  }}
+                />
+              </Badge>
+            </Link>
+  
+            <Link
+              to={
+                JSON.parse(isAuthenticated())?.user?.role === 0
+                  ? '/user/Dashboard'
+                  : '/admin/Dashboard'
+              }
+              style={LinkStyle}
+            >
+              <AccountCircleIcon
+                sx={{
+                  color: isActive(location, JSON.parse(isAuthenticated())?.user?.role === 0
+                  ? '/user/Dashboard'
+                  : '/admin/Dashboard'),
+                  fontSize: 30,
+                  transition: 'transform 0.2s ease',
+                  '&:hover': { transform: 'scale(1.2)' },
+                }}
+              />
+            </Link>
+          </Stack>
         </Stack>
-       {/* {isAuthenticated()===false&&<Stack sx={{bgcolor:isActive(location,"/signin")}} ><Link to="/signin"   style={LinkStyle}>Signin</Link></Stack>}
-       {isAuthenticated()===false&&<Stack sx={{bgcolor:isActive(location,"/signup")}}><Link to="/signup" style={LinkStyle}>Signup</Link></Stack>}
-       {<Stack sx={{bgcolor:isActive(location,"/Dashboard")}}><Link to="/Dashboard" style={LinkStyle}>Dashboard</Link></Stack>} */}
-       <Stack direction="row" spacing={3}>
-       <Stack><Link to="/" style={LinkStyle}><Typography sx={{borderBottom:isActive(location,"/")?`2px solid ${isActive(location,"/")}`:"",color:isActive(location,"/")}}>Home</Typography></Link></Stack>
-       <Stack><Link to="/shop" style={LinkStyle} ><Typography sx={{borderBottom:isActive(location,"/shop")?`2px solid ${isActive(location,"/shop")}`:"",color:isActive(location,"/shop")}}>Shop</Typography></Link></Stack>
-       </Stack>
-       </Stack>
-       <Stack direction ="row" spacing={2} alignItems="center">
-       {SearchBar()}
-       <Stack ><Link to="/Cart" style={LinkStyle}><ShoppingCartIcon sx={{borderBottom:isActive(location,"/Cart")?`2px solid ${isActive(location,"/Cart")}`:"",color:isActive(location,"/Cart")}}/><sup>{itemTotal()}</sup></Link></Stack>
-       <Stack ><Link to={JSON.parse(isAuthenticated())?.user?.role==0?"/user/Dashboard":"/admin/Dashboard"} style={LinkStyle}><AccountCircleIcon sx={{color:isActive(location,"/Dashboard")}}/></Link></Stack>
-       {/* {isAuthenticated()&&<Stack sx={{bgcolor:'red', cursor:"pointer"}}  onClick={()=>{signout(navigate)}}>signout</Stack>} //will be on user page */}
-       </Stack>
-      </Stack>
-    )
+      </Box>
+    );
 }
