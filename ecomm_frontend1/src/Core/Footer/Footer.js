@@ -1,12 +1,47 @@
-import React from "react";
-import {Typography,Stack,Container} from "@mui/material"
+import React from 'react';
+import { Stack, Typography, Divider, Box } from '@mui/material';
 
 const Footer = () => (
-    <Stack height="20vh" width="100%"sx={{ backgroundColor: "#333B6A", color: "white", py: 3 ,boxSizing:"border-box", textAlign: "center" }}>
-      <Typography variant="h6">Book Becho</Typography>
-      <Typography variant="body2">Your trusted marketplace for buying and selling books</Typography>
-      <Typography variant="body2">Contact: support@bookbecho.com | +91 98765 43210</Typography>
-      <Typography variant="body2">&copy; {new Date().getFullYear()} Book Becho. All Rights Reserved.</Typography>
+  <Box
+    component="footer"
+    sx={{
+      backgroundColor: '#333B6A',
+      color: 'white',
+      width: '100%',
+      mt: '40px',
+      py: { xs: 3, md: 4 },
+      px: { xs: 2, md: 4 },
+      textAlign: 'center',
+      boxShadow: '0 -2px 12px rgba(0,0,0,0.4)',
+    }}
+  >
+    <Stack spacing={1}>
+      <Typography variant="h6" sx={{ fontWeight: 'bold', letterSpacing: 1 }}>
+        Book Store
+      </Typography>
+      <Typography variant="body2" sx={{ opacity: 0.85 }}>
+        Your trusted marketplace for buying books.
+      </Typography>
+      <Divider
+        sx={{
+          borderColor: 'rgba(255, 255, 255, 0.2)',
+          my: 1,
+          mx: 'auto',
+          width: '50%',
+        }}
+      />
+      <Typography variant="body2" sx={{ opacity: 0.75 }}>
+        Contact: <a href="mailto:support@bookbecho.com" style={{ color: '#ffffff', textDecoration: 'underline' }}>
+          support@bookbecho.com
+        </a>{' '}
+        | +91 98765 43210
+      </Typography>
+      <Typography variant="caption" sx={{ opacity: 0.5 }}>
+        &copy; {new Date().getFullYear()} Book Becho. All Rights Reserved.
+      </Typography>
     </Stack>
-  );
-  export default Footer;
+  </Box>
+);
+
+export default Footer;
+

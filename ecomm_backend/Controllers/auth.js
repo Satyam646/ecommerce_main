@@ -2,6 +2,8 @@
     const jwt= require("jsonwebtoken"); // to generate signed token
     // const expressJwt= require("express-jwt");// for authorization check
     const express = require('express');
+    const { OAuth2Client } = require('google-auth-library');
+    const client = new OAuth2Client("138079214967-krcqb0pamcehpenmqb6t7cjice8u2nrb.apps.googleusercontent.com");
 
     const { expressjwt } = require('express-jwt');
     const User = require('../Models/users');
@@ -126,6 +128,51 @@
         }
         next();
     }
+    async function verifyGoogleToken(token) {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: "138079214967-krcqb0pamcehpenmqb6t7cjice8u2nrb.apps.googleusercontent.com",
+        });
+        return ticket.getPayload();
+    }
     
+    exports.googleLogin = async (req, res) => {
+        const { token } = req.body;
     
-
+        try {
+            const payload = await verifyGoogleToken(token);
+            let user = await User.findOne({ email: payload.email });
+    
+            if (!user) {
+                const newUser = new User({
+                    name: payload.name,
+                    email: payload.email,
+                    password: payload.sub,  // or handle this better
+                    role: 0
+                });
+    
+                try {
+                    await newUser.save();
+                    user = newUser;
+                } catch (error) {
+                    console.error("User creation failed:", error);
+                    return res.status(500).json({ error: "User creation failed." });
+                }
+            }
+    
+            // Directly generate JWT without password check for Google Sign-In
+            const jwtToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    
+            res.cookie('t', jwtToken, { expire: new Date(Date.now() + 24 * 60 * 60 * 1000) });
+    
+            const { _id, name, email, role } = user;
+            return res.status(200).json({
+                token: jwtToken,
+                user: { _id, email, role, name }
+            });
+    
+        } catch (err) {
+            console.error("Google Login Error:", err);
+            return res.status(401).json({ error: "Invalid Google token or server error." });
+        }
+    };

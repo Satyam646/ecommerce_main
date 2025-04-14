@@ -1,6 +1,7 @@
 import React from "react";
 import TextField from '@mui/material/TextField';
-import {Box, Button ,Typography } from "@mui/material";
+import {Box, Button ,Typography,Paper } from "@mui/material";
+import { Google, Apple } from '@mui/icons-material';
 import { Stack } from "@mui/material";
 import  Grid from "@mui/material/Grid2";
 import { postApi }   from "../api";
@@ -9,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { authentication } from "../Common/auth/auth"; 
 import "../Common/Loader.css"
 import { Link } from "react-router-dom";
+import { GoogleLogin } from '@react-oauth/google';
+import { API } from "../config";
 // import {bookBecho} from "../image/bookBecho.png"
 import bookBecho from "../Image/BookBecho.png"
 export default function Signin(){
@@ -71,7 +74,7 @@ export default function Signin(){
        {/* </Stack> */}
        {/* <Stack  sx={{alignSelf:"start"}}> */}
        <Button variant="outlined" type="submit" onClick={handleSubmit} color="success">Signin</Button>
-       <Stack>Not Registered with us  <Link to="/Signup">SignIn</Link> </Stack>
+       <Stack>Not Registered with us  <Link to="/Signup">SignUp</Link></Stack>
         {/* <Typography>Email</Typography> */}
         
        {/* <Typography>Password</Typography> */}
@@ -80,36 +83,97 @@ export default function Signin(){
        </Box>
     )
   }
-    return (
-         <Stack height="70vh"sx={{padding:"50px" ,bgcolor:"#CAFBFF"}} spacing={2}>
-       {values.loading && (
-    <div className="loader-overlay">
-      <div className="gradient-spinner">
-        <div className="gradient-spinner-inner"></div>
-      </div>
-      
-      <div className="particles-container">
-        {[...Array(12)].map((_, i) => (
-          <div key={i} className="particle"></div>
-        ))}
-      </div>
-    </div>
-  )}
-        
-        
-        <Grid container spacing={2} alignItems="center">
-            <Grid size={6} > 
-              <Stack spacing={1}>
-            {showError()}
-            {showForm()}
+  const handleSuccess = async (credentialResponse) => {
+    const res = await fetch(`${API}api/google-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: credentialResponse.credential })
+    });
+
+    const data = await res.json();
+    if (data.token) {
+      setValues({...values,error:false,success:true,loading:false})
+      authentication(data);
+      navigate("/")
+    } else {
+      setValues({...values,error:res?.error,loading:false})
+    }
+}
+  return (
+    <Stack
+      height="100vh"
+      sx={{
+        padding: { xs: '20px', md: '60px' },
+        background: 'linear-gradient(135deg, #E0F7FA, #FFFFFF)',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      {values.loading && (
+        <div className="loader-overlay">
+          <div className="gradient-spinner">
+            <div className="gradient-spinner-inner"></div>
+          </div>
+          <div className="particles-container">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="particle"></div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <Paper
+        elevation={6}
+        sx={{
+          borderRadius: '20px',
+          padding: { xs: 3, md: 5 },
+          maxWidth: '1000px',
+          width: '100%',
+          background: '#FFFFFFDD',
+          backdropFilter: 'blur(8px)',
+        }}
+      >
+        <Grid container spacing={4} alignItems="center">
+          <Grid item xs={12} md={6}>
+            <Stack spacing={3}>
+              <Typography variant="h4" fontWeight="bold" color="#0D47A1">
+                Welcome Back!
+              </Typography>
+              {showError()}
+              {showForm()}
+
+              <Typography variant="body2" textAlign="center" color="gray">
+                Or continue with
+              </Typography>
+
+              <Stack direction="column" spacing={1.5}>
+              <GoogleLogin
+        onSuccess={handleSuccess}
+        onError={() => {
+          console.log('Login Failed');
+        }}
+      />
+              </Stack>
             </Stack>
-       
-       
-       </Grid>
-        <Grid size={6}>
-              <img src={bookBecho} alt="/" height="400px" width="100%" /> 
-        </Grid>
           </Grid>
-        </Stack>
-    )
+
+          <Grid item xs={12} md={6}>
+            <img
+              src={bookBecho}
+              alt="Login Illustration"
+              style={{
+                width: '100%',
+                borderRadius: '20px',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                objectFit: 'cover',
+                maxHeight: '400px',
+              }}
+            />
+          </Grid>
+        </Grid>
+      </Paper>
+    </Stack>
+  );
+
+
 }

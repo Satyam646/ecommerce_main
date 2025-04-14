@@ -1,170 +1,228 @@
-import react, { useEffect,useState } from "react"
-import { Box, Button, Stack, TextField, Typography } from "@mui/material"
-import { getProductOnCart } from "./AddItem"
+import React, { useEffect, useState } from "react";
+import { Box, Button, Stack, TextField, Typography, Paper } from "@mui/material";
 import Grid from "@mui/material/Grid2";
+import { getProductOnCart } from "./AddItem";
 import Card from "../Home/Cards";
 import { isAuthenticated } from "../../Common/auth/auth";
 import { useNavigate } from "react-router-dom";
-import { getApiAuth } from "../../api";
+import { getApiAuth, postAuthApi } from "../../api";
 import DropIn from 'braintree-web-drop-in-react';
-import { postAuthApi } from "../../api";
-export default function Cart(){
-    const [products,setProducts] = useState();
-    const navigate = useNavigate();
-    const [data,setData] = useState({
-        success:false,
-        clientToken:null,
-        error:'',
-        instance:{},
-        address:'',
+
+export default function Cart() {
+    const [products, setProducts] = useState([]);
+    const [data, setData] = useState({
+        success: false,
+        clientToken: null,
+        error: '',
+        instance: null,
+        address: { street: '', city: '', state: '', pincode: '' }
     });
-    const userId=JSON.parse(isAuthenticated())?.user._id;
-    const token= JSON.parse(isAuthenticated())?.token;
-    const UpdateProducts = ()=>{
-    let arr=getProductOnCart();
-    setProducts(arr);
-    }
-    const buy = () =>{
-        let nonce;
-        let getNonce = data.instance?.requestPaymentMethod().then(data=>{
-            console.log("data",data)
-            nonce = data.nonce
-            const paymentData ={
-                paymentMethodNonce: nonce,
-                amount:getTotal(),
-            };
-            processPayment(paymentData);
-            console.log('send nonce and total to process: ',nonce,getTotal());
-        }).catch(error=>{
-            console.log('dropin error: ', error)
-            setData({...data,error:error})
-        })
-    }
-   const manageOrders = async (id,amount) =>{
-   const createOrder = {
-    products:products,
-    transaction_id:id,
-    amount:amount,
-    address:data.address,
+    const [showPaymentUI, setShowPaymentUI] = useState(false);
 
-   }
-   const token=JSON.parse(isAuthenticated()).token;
-   const result = await postAuthApi(`order/create/${userId}`,createOrder,token);
-   //console.log(result);
-   const res=await result.json(); 
-   if(!result.ok){
-    console.log("response",res);
-   } else{
-    console.log("response",res);
-   }
-   }
-   const processPayment = async (paymentData) =>{
-                //    const body={
-                //      name:values.name
-                // braintree/payment/
-                //    }      
-                   const token=JSON.parse(isAuthenticated()).token;
-                   const result = await postAuthApi(`braintree/payment/${userId}`,paymentData,token);
-                   //   console.log(result);  
-                   const res=await result.json(); 
-                   if(!result.ok){
-                     // console.log("err",await result.json());
-                     console.log("response",res);
-                     setData({...data,error:res?.error,loading:false})
-                   }else{
-                    console.log("response",res);
-                     setData({...data,success:true,loading:false});
-                     manageOrders(res?.transaction?.id,res?.transaction?.amount);
-                     emptyCart();
-                     window.location.reload();
-                   }
+    const navigate = useNavigate();
+    const userId = JSON.parse(isAuthenticated())?.user._id;
+    const token = JSON.parse(isAuthenticated())?.token;
+
+    const updateProducts = () => {
+        const arr = getProductOnCart();
+        setProducts(arr || []);
     };
-    const emptyCart=()=>{
-        //   if(typeofwindow()!=undefined){
-            localStorage.removeItem('cart');
-            // window.location.reload();
-        //   }
-    }
-    const getTotal = () =>{
-        const value= products?.reduce((acc,currval) => acc+(currval.count*currval.price),0);
-        // setValue(value);
-        return value;
-    }
-    const getToken = () => {
-               getApiAuth(`braintree/getToken/${userId}`,token).then(data=>{
-                                 if(data?.error){
-                                    setData({...data,error:data?.error});
-                                 }else{
-                                     setData({clientToken:data?.clientToken});
-                                 }
-                             })
-    }
-    const handleAddress = (event) =>{
-      setData({...data,address:event.target.value});
-    }
-const checkOut= () =>{
-   return (
-    <Stack>
-       <Typography variant="h5">Total Item Summary</Typography>
-       <Typography>Total Price:${getTotal()}</Typography>
-       <Typography>Add Address</Typography>
-       <textarea name="address" label="address" rows="4" cols="50" onChange={handleAddress}></textarea>
-       {data.success&&<Stack sx={{bgcolor:"green",height:"30px",color:"White",padding:"2px 0px 0px 10px",boxSizing:"border-box"}}><Typography sx={{}}>Payment successfull!!</Typography></Stack>}
-       {isAuthenticated()&&showDropIn()}
-       {!isAuthenticated()&&<Button variant="contained" onClick={()=>{
-        navigate("/signin")
-       }}>please Signin..</Button>}
-    </Stack>
-   )
-    }
-    useEffect(()=>{
-        UpdateProducts();
-        getToken();
-    },[])
-    const showDropIn = () =>{
-        return (
-            (data?.clientToken!=null&&products.length>0)?(
-                <div>
-                         {data?.clientToken&&<DropIn options={{
-                            authorization: data?.clientToken,
-                            googlePay: {
-                                // environment: "TEST",
-                                // googlePayVersion: 2,
-                                // transactionInfo: {
-                                // totalPriceStatus: 'FINAL',
-                                // totalPrice: '1',
-                                // currencyCode: 'USD'
-                                // },
-                                flow:"vault"
-                            }
-                         }} 
-                         onInstance={(instance) =>{ data.instance=instance
-                            // console.log("DropIn instance created", instance);
-                            // setData({...data,instance:instance})}}
-                         }}
-                          /> }
-                         <Button variant="contained" sx={{alignSelf:"left",bgcolor:"green"}} onClick={buy} fullWidth>Pay</Button>
-                </div>
-            ):null
-        )
-    }
-    console.log(data?.clientToken,"hii")
-    return (
-        <Stack minHeight="70vh" sx={{padding:"5px"}}>
-            {products?.length==0?<h5>Your Cart is empty... continue shopping</h5>:
-            <Grid container spacing={1}>
-            <Grid size={4}>
-                <Stack spacing={1} sx={{padding:"0px 120px 0px 0px"}}>
-                {products?.map((product,indx)=>
-                         <Card key={indx} product={product} onCart={false} UpdateCart={UpdateProducts}/>
-                )}
-                </Stack>
-            </Grid>
-            <Grid  size={8}>
-                {checkOut()}
-            </Grid>
-        </Grid>}
-        </Stack>
-    )
-}
 
+    const handleAddressChange = (event) => {
+        const { name, value } = event.target;
+        setData(prev => ({
+            ...prev,
+            address: { ...prev.address, [name]: value }
+        }));
+    };
+
+    const getTotal = () => products.reduce((acc, curr) => acc + (curr.count * curr.price), 0);
+
+    const proceedToPayment = () => {
+        const { street, city, state, pincode } = data.address;
+        if (!street || !city || !state || !pincode) {
+            alert("Please fill all address fields.");
+            return;
+        }
+        setShowPaymentUI(true);
+    };
+
+    const buy = () => {
+        if (!data.instance) return;
+
+        data.instance.requestPaymentMethod().then(paymentData => {
+            const paymentInfo = {
+                paymentMethodNonce: paymentData.nonce,
+                amount: getTotal()
+            };
+            processPayment(paymentInfo);
+        }).catch(error => {
+            console.log('DropIn error:', error);
+            setData(prev => ({ ...prev, error }));
+        });
+    };
+
+    const processPayment = async (paymentData) => {
+        const result = await postAuthApi(`braintree/payment/${userId}`, paymentData, token);
+        const res = await result.json();
+
+        if (!result.ok) {
+            console.error("Payment Error:", res);
+            setData(prev => ({ ...prev, error: res?.error }));
+        } else {
+            setData(prev => ({ ...prev, success: true }));
+            manageOrders(res.transaction.id, res.transaction.amount);
+            emptyCart();
+            window.location.reload();
+        }
+    };
+
+    const manageOrders = async (transactionId, amount) => {
+        const { street, city, state, pincode } = data.address;
+        const combinedAddress = `${street}, ${city}, ${state} - ${pincode}`;
+
+        const order = {
+            products,
+            transaction_id: transactionId,
+            amount,
+            address: combinedAddress
+        };
+
+        const result = await postAuthApi(`order/create/${userId}`, order, token);
+        const res = await result.json();
+        console.log("Order Response:", res);
+    };
+
+    const emptyCart = () => {
+        localStorage.removeItem('cart');
+    };
+
+    const getToken = () => {
+        getApiAuth(`braintree/getToken/${userId}`, token).then(response => {
+            if (response?.error) {
+                setData(prev => ({ ...prev, error: response.error }));
+            } else {
+                setData(prev => ({ ...prev, clientToken: response.clientToken }));
+            }
+        });
+    };
+
+    const showDropIn = () => (
+        data.clientToken && products.length > 0 && (
+            <Box mt={2}>
+                <DropIn
+                    options={{ authorization: data.clientToken, googlePay: { flow: "vault" } }}
+                    onInstance={(instance) => setData(prev => ({ ...prev, instance }))}
+                />
+                <Button variant="contained" color="success" onClick={buy} fullWidth>
+                    Pay Now
+                </Button>
+            </Box>
+        )
+    );
+
+    useEffect(() => {
+        updateProducts();
+        getToken();
+    }, []);
+
+    return (
+        <Stack minHeight="70vh" sx={{ padding: "16px" }}>
+            {products.length === 0 ? (
+                <Typography variant="h6">Your Cart is empty... continue shopping!</Typography>
+            ) : (
+                <Grid container spacing={30}>
+    <Grid xs={12} md={3}>
+        <Stack spacing={2}>
+            {products.map((product, index) => (
+                <Card
+                    key={index}
+                    product={product}
+                    onCart={false}
+                    UpdateCart={updateProducts}
+                />
+            ))}
+        </Stack>
+    </Grid>
+
+    <Grid xs={12} md={9} display="flex">
+        <Stack elevation={3} sx={{ padding: 3,width:"800px"}}>
+            <Typography variant="h5" gutterBottom>Order Summary</Typography>
+            <Typography variant="subtitle1">Total Price: ${getTotal()}</Typography>
+
+            {!showPaymentUI ? (
+                <Box>
+                    <Box>
+                        <Typography variant="h6" mt={2}>Shipping Address</Typography>
+                        <Stack spacing={2} mt={1}>
+                            <TextField
+                                label="Street Address"
+                                name="street"
+                                value={data.address.street}
+                                onChange={handleAddressChange}
+                                fullWidth
+                            />
+                            <TextField
+                                label="City"
+                                name="city"
+                                value={data.address.city}
+                                onChange={handleAddressChange}
+                                fullWidth
+                            />
+                            <TextField
+                                label="State"
+                                name="state"
+                                value={data.address.state}
+                                onChange={handleAddressChange}
+                                fullWidth
+                            />
+                            <TextField
+                                label="Pincode"
+                                name="pincode"
+                                value={data.address.pincode}
+                                onChange={handleAddressChange}
+                                fullWidth
+                            />
+                        </Stack>
+                        {isAuthenticated() ? (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={proceedToPayment}
+                            fullWidth
+                            sx={{ mt: 3 }}
+                        >
+                            Proceed to Pay
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="contained"
+                            onClick={() => navigate("/signin")}
+                            fullWidth
+                            sx={{ mt: 3 }}
+                        >
+                            Please Sign In
+                        </Button>
+                    )}
+                    </Box>
+
+                    
+                </Box>
+            ) : (
+                <>
+                    {showDropIn()}
+                    {data.success && (
+                        <Stack sx={{ bgcolor: "green", color: "white", p: 1, borderRadius: 1, mt: 2 }}>
+                            <Typography>Payment Successful!</Typography>
+                        </Stack>
+                    )}
+                </>
+            )}
+        </Stack>
+    </Grid>
+</Grid>
+
+            )}
+        </Stack>
+    );
+}
