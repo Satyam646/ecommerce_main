@@ -1,180 +1,160 @@
-import React, { useEffect, useState } from "react"
-import { getApi } from "../../api"
+import React, { useEffect, useState, useContext } from "react";
+import { getApi } from "../../api";
 import Grid from "@mui/material/Grid2";
-import { Stack, Button, Select, MenuItem, TextField, FormControl, InputLabel, Typography } from "@mui/material"
+import { Stack, Typography, Alert, Snackbar, Skeleton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import SimpleImageSlider from "react-simple-image-slider";
-import { useContext } from 'react';
 import { ThemeContext } from '../../Common/ThemeContext/ThemeContext';
-import Alert from '@mui/material/Alert';
-import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
-import bookBecho from "../../Image/BookBecho.png"
-import bgimage from "../../Image/bgimage.jpg"
-import wallimage from "../../Image/wallimage.png"
-// import queryString from 'query-string';
-import Card from "./Cards"
+import Card from "./Cards";
+import bgimage from "../../Image/bgimage.jpg";
+import wallimage from "../../Image/wallimage.png";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+
 export default function Home() {
-    const { SnackBar, toggleSnackBar, searchData, searchedProduct, setsearchedProduct, searched, setSearched } = useContext(ThemeContext)
+    const { SnackBar, toggleSnackBar, searchData, searchedProduct, searched } = useContext(ThemeContext);
     const navigate = useNavigate();
-    const [values, setValues] = useState({
-        productsByArrival: [{}],
-        productBySell: [{}],
-        searchedData: [{}],
-        error: "",
-        bestSellers: "",
-    });
 
+    const [values, setValues] = useState({ productsByArrival: [], productBySell: [], error: "" });
+    const [loading, setLoading] = useState(true);
+    const [categories, setCategories] = useState([]);
 
-    // const [searchData,setSearchData] = useState("");
-    const [categories, setcategories] = useState([{}]);
-    const [selectedCategory, setSelectedCategory] = useState();
-    // const handleSearch=(event)=>{
-    //     setSearchData(event.target.value);
-    // }
-    const handleCategory = (event) => {
-        setSelectedCategory(event.target.value);
-    }
-    const getProductByArrival = (product) => {
-        // Here We Have to pass the query in this Api
+    const images = [bgimage, wallimage];
+
+    const getProductByArrival = (bestSellers) => {
         getApi(`product?sortBy=createdAt&order=desc&limit=8`).then(data => {
-            if (data?.error) {
-                setValues({ ...values, error: data?.error });
-            }
-            else {
-                setValues({ ...values, productBySell: product, productsByArrival: data?.product });
-            }
-        })
-    }
+            if (data?.error) setValues(prev => ({ ...prev, error: data.error }));
+            else setValues(prev => ({ ...prev, productBySell: bestSellers, productsByArrival: data?.product }));
+            setLoading(false);
+        });
+    };
 
     const getProductBySell = () => {
         getApi(`product?sortBy=sold&order=desc&limit=6`).then(data => {
             if (data?.error) {
-                setValues({ ...values, error: data?.error });
-            } else {
-                //  setValues({...values,productBySell:data?.product});
-                getProductByArrival(data?.product);
-            }
-        })
-    }
+                setValues(prev => ({ ...prev, error: data.error }));
+                setLoading(false);
+            } else getProductByArrival(data?.product);
+        });
+    };
+
     const getCategories = () => {
         getApi("category").then(data => {
-            if (data?.error) {
-                setValues({ ...values, error: data?.error });
-            } else {
-                setcategories(data?.category);
-            }
-        })
-    }
+            if (!data?.error) setCategories(data?.category);
+        });
+    };
+
     useEffect(() => {
         getCategories();
-    }, [])
-    useEffect(() => {
         getProductBySell();
-    }, [])
+    }, []);
 
-    // console.log("products detail",values?.product);
-    const SearchValdation = () => {
-        if (searched == false&&searchData=="") {
-            return "";
+    const SearchValidation = () => {
+        if (!searched && searchData === "") return "";
+        if (searched && searchData !== "") {
+            return `${searchedProduct?.length} result${searchedProduct.length !== 1 ? 's' : ''} found.`;
+        } else if (searched && searchedProduct.length === 0) {
+            return "No result found.";
         }
-        if (searched == true&&searchData!="") {
-            return `${searchedProduct?.length} result Found..`
-        }
-        else if (searched == true && searchedProduct.length == 0) {
-            return "No result found"
-        }
-    }
-    const showSearchedData = () => {
-        console.log(searchedProduct, "searchData");
-        return (
-            <Stack>
+    };
 
-                <Grid container spacing={3}>
-                    {searchedProduct?.map((product, indx) => {
-                        return (
-                            <Grid size={3} key={indx}>
-                                <Card product={product} />
-                            </Grid>
-                        )
-                    })}
+    const showSearchedData = () => (
+        <Stack>
+            <Grid container spacing={5}>
+                {searchedProduct.map((product, index) => (
+                    <Grid xs={12} md={3} key={index}>
+                        <Card product={product} />
+                    </Grid>
+                ))}
+            </Grid>
+        </Stack>
+    );
+
+    const showSnackBar = () => (
+        <Snackbar
+            anchorOrigin={{ vertical: 'top', horizontal: "right" }}
+            autoHideDuration={3000}
+            open={SnackBar?.open}
+            onClose={() => toggleSnackBar(false, "")}
+        >
+            <Alert onClose={() => toggleSnackBar(false, "")} severity="success" variant="filled" sx={{ width: '100%' }}>
+                {SnackBar.message}
+            </Alert>
+        </Snackbar>
+    );
+
+    const renderProducts = (products) => {
+        if (loading) {
+            return Array.from({ length: 4 }).map((_, index) => (
+                <Grid xs={12} md={3} key={index}>
+                    <Skeleton variant="rectangular" height={200} width={250} />
+                    <Skeleton width="80%" />
+                    <Skeleton width="60%" />
                 </Grid>
-            </Stack>
-        )
-    }
-    const showSnackBar = () => {
-        return (
-            <Snackbar
-                anchorOrigin={{ vertical: 'top', horizontal: "right" }}
-                autoHideDuration={3000}
-                open={SnackBar?.open}
-                // message={SnackBar.message}
-                onClose={() => { toggleSnackBar(false, "") }}
-            >
-                <Alert
-                    onClose={() => { toggleSnackBar(false, "") }}
-                    severity="success"
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                >
-                    {SnackBar.message}
-                </Alert>
-            </Snackbar>
-        )
-    }
-    const images = [
-        { url: bgimage },
-        { url: wallimage },
-        
-        // { url: "images/3.jpg" },
-        // { url: "images/4.jpg" },
-        // { url: "images/5.jpg" },
-        // { url: "images/6.jpg" },
-        // { url: "images/7.jpg" },
-      ];
-    const showform = () => {
-        return (
-            <Stack spacing={2}>
-                <Typography variant="h4" sx={{ alignSelf: "center" }}>BEST SELLERS</Typography>
-                <Grid container spacing={3}>
-                    {values?.productBySell?.map((product, indx) => {
-                        return (
-                            <Grid size={3} key={indx}>
-                                <Card product={product} />
-                            </Grid>
-                        )
-                    })}
-                </Grid>
-                <Typography variant="h4" sx={{ alignSelf: "center" }}>NEW ARRIVALS</Typography>
-                <Grid container spacing={3}>
-                    {values?.productsByArrival?.map((product, indx) => {
-                        return (
-                            <Grid size={3} key={indx}>
-                                <Card product={product} />
-                            </Grid>
-                        )
-                    })}
-                </Grid>
-            </Stack>
-        )
-    }
+            ));
+        }
+        return products.map((product, index) => (
+            <Grid xs={12} md={3} key={index}>
+                <Card product={product} />
+            </Grid>
+        ));
+    };
+
     return (
         <div>
-            <Stack spacing={1} sx={{padding:"5px"}}>
-                {/* <Stack>{SearchBar()}</Stack> */}
-                <Stack>{SearchValdation()}</Stack>
-                {searched == true&&searchData!=""&&<Stack>{showSearchedData()}</Stack>}
-                <Stack sx={{ width: "100vw", overflow: "hidden" }}>
-      <SimpleImageSlider
-        width={"99%"}
-        height={500}
-        images={images}
-        showBullets={true}
-        showNavs={true}
-      />
-    </Stack>
-                <Stack> {showform()}</Stack>
+            <Stack spacing={1} sx={{ padding: "5px" }}>
+                <Stack>{SearchValidation()}</Stack>
+
+                {searched && searchData !== "" && <Stack>{showSearchedData()}</Stack>}
+
+                <Stack sx={{ width: "100%", overflow: "hidden", borderRadius: "16px" }}>
+    <Swiper
+        modules={[Autoplay, Pagination, Navigation]}
+        spaceBetween={30}
+        centeredSlides={true}
+        autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+        }}
+        pagination={{ clickable: true }}
+        navigation={true}
+        style={{ width: "100%", height: "auto" }}
+    >
+        {images.map((url, index) => (
+            <SwiperSlide key={index} style={{ display: "flex", justifyContent: "center" }}>
+                <img
+                    src={url}
+                    alt={`slide-${index}`}
+                    style={{
+                        width: "100%",
+                        height: "auto",
+                        maxHeight: "500px",
+                        objectFit: "cover",
+                        borderRadius: "16px"
+                    }}
+                />
+            </SwiperSlide>
+        ))}
+    </Swiper>
+</Stack>
+
+
+                <Stack spacing={2}>
+                    <Typography variant="h4" sx={{ alignSelf: "center" }}>BEST SELLERS</Typography>
+                    <Grid container spacing={9}>
+                        {renderProducts(values.productBySell)}
+                    </Grid>
+
+                    <Typography variant="h4" sx={{ alignSelf: "center" }}>NEW ARRIVALS</Typography>
+                    <Grid container spacing={9}>
+                        {renderProducts(values.productsByArrival)}
+                    </Grid>
+                </Stack>
             </Stack>
+
             {showSnackBar()}
         </div>
-    )
+    );
 }

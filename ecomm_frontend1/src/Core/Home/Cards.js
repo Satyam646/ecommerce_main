@@ -24,7 +24,7 @@ export default function Card({product,onCart=true,UpdateCart}){
     }
     const ShowStock = (quantity) =>{
         return (
-         quantity>0?<Stack sx={{bgcolor:"lightgreen",width:"50px",alignItems:"center", borderRadius:"3px"}}><Typography>Stock</Typography></Stack>:<Stack sx={{bgcolor:"red",width:"80px",alignItems:"center", borderRadius:"3px"}}>StockOut</Stack>
+         quantity>0?<Stack sx={{bgcolor:"lightgreen",width:"50px",alignItems:"center", borderRadius:"3px" }}><Typography>Stock</Typography></Stack>:<Stack sx={{bgcolor:"red",width:"80px",alignItems:"center", borderRadius:"3px"}}>StockOut</Stack>
         )
      }
   //  return (

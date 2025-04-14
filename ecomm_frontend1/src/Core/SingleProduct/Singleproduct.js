@@ -1,130 +1,150 @@
-import react,{useState,useEffect} from "react"
-import { Button, Stack, Typography } from "@mui/material"
-import { getApi } from "../../api"
-import { useLocation } from "react-router-dom";
-import Grid from "@mui/material/Grid2"
+import React, { useState, useEffect, useContext } from "react";
+import { Button, Stack, Typography, Alert, Snackbar, Skeleton, Chip } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import { getApi } from "../../api";
 import { API } from "../../config";
-import Card from "../Home/Cards"
+import { useLocation } from "react-router-dom";
+import Card from "../Home/Cards";
 import { AddItem } from "../Cart/AddItem";
-import { useContext } from 'react';
-import Alert from '@mui/material/Alert';
 import { ThemeContext } from '../../Common/ThemeContext/ThemeContext';
-import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
 
-export default function SingleProduct(){
-    const { SnackBar, toggleSnackBar } = useContext(ThemeContext)
-    const currentLocation = useLocation().pathname.split("/")[2];
-    console.log("currentlocation",currentLocation);
-    const [values,setValues] = useState({
-        error:"",
-        product:{},
-    });
-    const [relatedProduct,setRelatedProduct] = useState([]);
+export default function SingleProduct() {
+    const { SnackBar, toggleSnackBar } = useContext(ThemeContext);
+    const productId = useLocation().pathname.split("/")[2];
 
-    const getProduct = ()=>{      
-        getApi(`product/${currentLocation}`).then(data=>{
-            if(data?.error){
-               setValues({...values,error:data?.error});
-            }else{
-                setValues({...values,product:data});
-            }
-        })
-    }
-    const path=`${API}product/photo/${values?.product?._id}`;
-    const listRelatedProduct = ()=>{
-        getApi(`product/related/${currentLocation}`).then(data=>{
-            if(data?.error){
-               setValues({...values,error:data?.error});
-            }else{
-                setRelatedProduct(data);
-            }
-        })
-     }
-     const showRelatedProduct=()=>{
-        return(
-      <Stack>
-        <Grid container spacing={1}>
-       
-        {relatedProduct.map((product)=>  <Grid size={4}><Stack sx={{padding:"10px 30px 30px 0px"}}><Card product={product}/></Stack></Grid>)}
-       
-        </Grid> 
-      </Stack>
-        )
-     }
-      const showSnackBar = () => {
-             return (
-                 <Snackbar
-                     anchorOrigin={{ vertical: 'top', horizontal: "right" }}
-                     autoHideDuration={3000}
-                     open={SnackBar?.open}
-                     // message={SnackBar.message}
-                     onClose={() => { toggleSnackBar(false, "") }}
-                 >
-                     <Alert
-                         onClose={() => { toggleSnackBar(false, "") }}
-                         severity="success"
-                         variant="filled"
-                         sx={{ width: '100%' }}
-                     >
-                         {SnackBar.message}
-                     </Alert>
-                 </Snackbar>
-             )
-         }
-     useEffect(()=>{
-      
-     },[])
-   useEffect(()=>{
-    getProduct();
-    listRelatedProduct();
-   },[currentLocation])
-    const ShowStock = (quantity) =>{
-       return (
-        quantity>0?<Stack sx={{bgcolor:"lightgreen",width:"50px",alignItems:"center", borderRadius:"3px"}}>Stock</Stack>:<Stack sx={{bgcolor:"Red",width:"50px",alignItems:"center", borderRadius:"3px"}}>Stock out</Stack>
-       )
-    }
-    const showForm=()=>{
+    const [product, setProduct] = useState(null);
+    const [relatedProducts, setRelatedProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const productImage = product ? `${API}product/photo/${product._id}` : "";
+
+    const fetchProduct = async () => {
+        const data = await getApi(`product/${productId}`);
+        if (!data?.error) setProduct(data);
+        setLoading(false);
+    };
+
+    const fetchRelatedProducts = async () => {
+        const data = await getApi(`product/related/${productId}`);
+        if (!data?.error) setRelatedProducts(data);
+    };
+
+    useEffect(() => {
+        setLoading(true);
+        fetchProduct();
+        fetchRelatedProducts();
+    }, [productId]);
+
+    const StockBadge = (quantity) => (
+        <Chip
+            label={quantity > 0 ? "In Stock" : "Out of Stock"}
+            color={quantity > 0 ? "success" : "error"}
+            variant="filled"
+            sx={{ fontWeight: 500, fontSize: "0.85rem" }}
+        />
+    );
+
+    const ProductDetails = () => {
+        if (loading) {
+            return (
+                <Grid container spacing={4} alignItems="center">
+                    <Grid xs={12} md={6}>
+                        <Skeleton variant="rectangular" height={450} sx={{ borderRadius: 2 }} />
+                    </Grid>
+                    <Grid xs={12} md={6}>
+                        <Stack spacing={2}>
+                            <Skeleton variant="text" width="80%" height={40} />
+                            <Skeleton variant="text" width="60%" />
+                            <Skeleton variant="text" width="30%" />
+                            <Skeleton variant="rectangular" width="40%" height={40} />
+                        </Stack>
+                    </Grid>
+                </Grid>
+            );
+        }
+
         return (
-            <Stack>
-            {/* <Stack>
-             <img src={path}/>
-             <STac></> */}
-             <Grid container spacing={1}>
-              <Grid size={4}>
-                <Stack>
-                <img src={path} alt="/"/>
-                </Stack>
-              </Grid>
-              <Grid size={8}>
-               <Stack spacing={1}>
-                <h2>{values?.product?.name}</h2>
-                <h5>{values?.product?.description}</h5>
-                <h6>${20}</h6>
-                <h6>Category:{values?.product?.category&&values?.product?.category.name}</h6>
-                {ShowStock(values?.product?.quantity)}
-                <Stack direction="row" >
-                <Button variant="outlined" color="success" onClick={()=>{
-                   AddItem(values?.product);
-                   toggleSnackBar(true,"Product Added to cart succesfully")
-                }}>Add to Cart</Button>
-                {/* <Button variant="contained">Buy Now</Button> */}
-                </Stack>
-               </Stack>
-              </Grid>
-             </Grid>
+            <Grid container spacing={4} alignItems="center">
+                <Grid xs={12} md={6}>
+                    <Stack alignItems="center">
+                        <img
+                            src={productImage}
+                            alt={product?.name || "Product Image"}
+                            style={{
+                                width: "100%",
+                                maxHeight: "500px",
+                                objectFit: "contain",
+                                borderRadius: 12,
+                                boxShadow: "0 4px 20px rgba(0,0,0,0.1)"
+                            }}
+                        />
+                    </Stack>
+                </Grid>
+
+                <Grid xs={12} md={6}>
+                    <Stack spacing={2}>
+                        <Typography variant="h4" fontWeight="bold">{product?.name}</Typography>
+                        <Typography variant="body1" color="text.secondary">{product?.description}</Typography>
+                        <Typography variant="h5" color="primary" fontWeight="600">${product?.price || "20"}</Typography>
+                        <Typography variant="body2">Category: {product?.category?.name || "Uncategorized"}</Typography>
+                        {StockBadge(product?.quantity)}
+                        <Stack direction="row" spacing={2} mt={2}>
+                            <Button
+                                variant="contained"
+                                color="success"
+                                size="large"
+                                sx={{ borderRadius: 2, textTransform: "none" }}
+                                onClick={() => {
+                                    AddItem(product);
+                                    toggleSnackBar(true, "Product added to cart successfully!");
+                                }}
+                            >
+                                Add to Cart
+                            </Button>
+                        </Stack>
+                    </Stack>
+                </Grid>
+            </Grid>
+        );
+    };
+
+    const RelatedProducts = () => {
+        if (!relatedProducts.length) return null;
+
+        return (
+            <Stack spacing={2} mt={5}>
+                <Typography variant="h5" textAlign="center">Related Books</Typography>
+                <Grid container spacing={2}>
+                    {relatedProducts.map((item, index) => (
+                        <Grid xs={12} sm={6} md={3} key={index}>
+                            <Card product={item} />
+                        </Grid>
+                    ))}
+                </Grid>
             </Stack>
-        )
-     }
-     
+        );
+    };
+
     return (
-        <Stack sx={{padding:"10px"}}>
-        {/* {JSON.stringify(values?.product)} */}
-        {showForm()}
-        <Stack>
-        {relatedProduct.length>0&&<Typography variant="h4" sx={{textAlign:"center"}}>Related books</Typography> }
-        {showRelatedProduct()}
-        {showSnackBar()}
+        <Stack spacing={4} sx={{ padding: "20px" }}>
+            {ProductDetails()}
+            {RelatedProducts()}
+
+            <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: "right" }}
+                autoHideDuration={3000}
+                open={SnackBar?.open}
+                onClose={() => toggleSnackBar(false, "")}
+            >
+                <Alert
+                    onClose={() => toggleSnackBar(false, "")}
+                    severity="success"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {SnackBar.message}
+                </Alert>
+            </Snackbar>
         </Stack>
-        </Stack>
-    )
+    );
 }
