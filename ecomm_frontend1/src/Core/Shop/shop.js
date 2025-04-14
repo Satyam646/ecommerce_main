@@ -75,7 +75,7 @@ export default function Shop(){
           <Stack sx={{ px: { xs: 1, md: 4 }, py: { xs: 2, md: 4 }, backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
             <Grid container spacing={2} >
               {/* Sidebar Filters */}
-              <Grid item xs={12} size={2}>
+              <Grid item size={{xs:12, md:3}}>
                 <Stack
                   sx={{
                     position: { md: 'sticky' },
@@ -93,8 +93,8 @@ export default function Shop(){
               </Grid>
       
               {/* Product Grid */}
-              <Grid item xs={12} size={10}>
-                <Grid container spacing={3} sx={{ marginTop: { xs: 2, md: 0 } }}>
+              <Grid item size={{xs:12, md:9}}>
+                <Grid container spacing={9} sx={{ marginTop: { xs: 2, md: 0 } }}>
                   {isLoading
                     ? Array.from({ length: 8 }).map((_, index) => (
                         <Grid key={index} item xs={12} sm={6} md={3} lg={3}>
@@ -195,7 +195,7 @@ export default function Shop(){
         getCategories();
     },[])
     return (
-        <Stack >
+        <Stack direction="row" flexWrap="wrap">
            {ProductLayout()}
         </Stack>
     )

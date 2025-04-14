@@ -50,7 +50,7 @@ export default function Signin(){
     }
     const showError = () =>{
         return (
-            values.error&&<Stack sx={{bgcolor:"red" ,padding:"20px", boxSizing:"border-box"}}>{values.error}</Stack>
+            values.error&&<Stack sx={{bgcolor:"red" ,padding:"10px", boxSizing:"border-box"}}>{values.error}</Stack>
              )
     }
     const showForm = () =>{ 
@@ -71,13 +71,8 @@ export default function Signin(){
          value={password}
          onChange={handleChange('password')}
        />
-       {/* </Stack> */}
-       {/* <Stack  sx={{alignSelf:"start"}}> */}
        <Button variant="outlined" type="submit" onClick={handleSubmit} color="success">Signin</Button>
        <Stack>Not Registered with us  <Link to="/Signup">SignUp</Link></Stack>
-        {/* <Typography>Email</Typography> */}
-        
-       {/* <Typography>Password</Typography> */}
        </Stack>
        </form>
        </Box>
@@ -124,28 +119,28 @@ export default function Signin(){
 
       <Paper
         elevation={6}
+        alignItems="center"
         sx={{
           borderRadius: '20px',
           padding: { xs: 3, md: 5 },
-          maxWidth: '1000px',
+          maxWidth: '1050px',
           width: '100%',
           background: '#FFFFFFDD',
           backdropFilter: 'blur(8px)',
+          
         }}
       >
-        <Grid container spacing={4} alignItems="center">
-          <Grid item xs={12} md={6}>
+        <Grid container spacing={9} alignItems="center">
+          <Grid item xs={12} md={4}>
             <Stack spacing={3}>
               <Typography variant="h4" fontWeight="bold" color="#0D47A1">
                 Welcome Back!
               </Typography>
               {showError()}
               {showForm()}
-
               <Typography variant="body2" textAlign="center" color="gray">
                 Or continue with
               </Typography>
-
               <Stack direction="column" spacing={1.5}>
               <GoogleLogin
         onSuccess={handleSuccess}
@@ -156,8 +151,7 @@ export default function Signin(){
               </Stack>
             </Stack>
           </Grid>
-
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={8} alignItems="center">
             <img
               src={bookBecho}
               alt="Login Illustration"
@@ -174,6 +168,4 @@ export default function Signin(){
       </Paper>
     </Stack>
   );
-
-
 }

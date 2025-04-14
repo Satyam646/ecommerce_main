@@ -17,7 +17,7 @@ const Footer = () => (
   >
     <Stack spacing={1}>
       <Typography variant="h6" sx={{ fontWeight: 'bold', letterSpacing: 1 }}>
-        Book Store
+        BookBecho
       </Typography>
       <Typography variant="body2" sx={{ opacity: 0.85 }}>
         Your trusted marketplace for buying books.
