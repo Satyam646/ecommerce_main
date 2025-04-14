@@ -40,7 +40,7 @@ export const DeleteProduct = (productId,userId,token) =>{
    return response.json(); 
    }).catch(err=>console.log(err));
 }
-export const UpdateProduct = (productId,userId,token,product) =>{
+export const UpdateSingleProduct = (productId,userId,token,product) =>{
     return fetch(`${API}product/${productId}/${userId}`,{
         method:"PUT",
         headers:{

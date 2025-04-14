@@ -141,9 +141,9 @@ export default function Home() {
 </Stack>
 
 
-                <Stack spacing={2}>
+                <Stack spacing={2} >
                     <Typography variant="h4" sx={{ alignSelf: "center" }}>BEST SELLERS</Typography>
-                    <Grid container spacing={9}>
+                    <Grid container spacing={9} >
                         {renderProducts(values.productBySell)}
                     </Grid>
 

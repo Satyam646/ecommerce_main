@@ -85,7 +85,7 @@ export default function ManageProducts(){
               <CardContent>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={2}>
-                    <img src={`${API}product/photo/${p?._id}`} alt={p?.name} sx={{ width: 64, height: 64 }} />
+                    <img src={`${API}product/photo/${p?._id}`} alt={p?.name} sx={{ width: "200px", height: "200px" }} />
                   </Grid>
                   <Grid item xs={4}>
                     <Typography variant="h6" fontWeight="bold">{p?.name}</Typography>
@@ -120,7 +120,6 @@ export default function ManageProducts(){
             {showList()}
             </Stack> 
             </Stack>
-            
         </Stack>
     )
 }

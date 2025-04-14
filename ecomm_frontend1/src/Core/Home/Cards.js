@@ -28,49 +28,6 @@ export default function Card({product,onCart=true,UpdateCart}){
         )
      }
   //  return (
-    
-  //   <Stack sx={{bgcolor:"#EEEEEE", cursor:"pointer", borderRadius:"10px"}}  >
-  //       <Stack sx={{padding:"20px"}}>
-  //       <img src={path}  alt="/" height="300px" style={{borderRadius:"10px"}}/>
-  //       </Stack>
-  //       {/* <hr/> */}
-  //       <Stack sx={{padding:"0px 20px 20px 20px"}} spacing={0.5}>
-  //       <Stack>
-  //           <Typography>{product?.name}</Typography>
-  //       </Stack>
-  //       {/* <Stack>
-  //       <Typography>{product?.description}</Typography> 
-  //       </Stack> */}
-  //       <Stack>
-  //           <Typography>price:${product?.price} </Typography> 
-  //       </Stack>
-  //       {ShowStock(product?.quantity)}
-  //       {onCart==false&&<Stack> <TextField
-  //         label="quantity"
-  //         type="number"
-  //         variant="standard"
-  //         value={count}
-  //         onChange={handleChange(product._id)}
-  //       //   slotProps={{
-  //       //     inputLabel: {
-  //       //       shrink: true,
-  //       //     },
-  //       //   }}
-  //       /></Stack>}
-  //       <Stack direction="row" spacing={1}>
-  //       <Button variant="outlined" onClick={()=>{navigate(`/product/${product?._id}`)}}>View Product</Button>
-  //        {onCart&&<Button variant="outlined" color="success" onClick={()=>{
-  //         AddItem(product);
-  //         toggleSnackBar(true,"Product Added to cart succesfully")
-  //       }}>Add to Cart</Button>}
-  //       {onCart==false&&<Button variant="outlined" color="error" onClick={()=>{
-  //         removeItemFromCart(product?._id);
-  //         UpdateCart();
-  //       }}>Remove Item</Button>}
-  //       </Stack>
-  //       </Stack>
-  //   </Stack>
-  //   );
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Box
@@ -94,7 +51,7 @@ export default function Card({product,onCart=true,UpdateCart}){
           src={path}
           alt={product?.name}
           height="320px"
-          width="100%"
+          width="270px"
           // sx={{ width: 100, height: 100 }}
           // style={{ objectFit: "cover", borderRadius: "1px" }}
         />

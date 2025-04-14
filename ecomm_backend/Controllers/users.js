@@ -1,7 +1,6 @@
 const { Order } = require("../Models/order");
 const User = require("../Models/users");
-const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 
 exports.userById = async (req, res, next, id) => {
     try {
@@ -100,42 +99,4 @@ exports.purchaseHistory = async (req,res)=>{
       }catch(error){
         res.status(400).json(error);
       }
-}
-exports.googleLogin=async(req,res)=>{
-    async function verifyGoogleToken(token) {
-        const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: process.env.GOOGLE_CLIENT_ID,
-        });
-        const payload = ticket.getPayload();
-        return payload;
-    }
-    const { token } = req.body;
-    try {
-        const payload = await verifyGoogleToken(token);
-
-        // Here you can check if the user exists in DB
-        let user = await User.findOne({ email: payload.email });
-
-        if (!user) {
-            // If not, create new user
-            user = await User.create({
-                name: payload.name,
-                email: payload.email,
-                googleId: payload.sub
-            });
-        }
-
-        // Generate your server JWT
-        const jwtToken = jwt.sign(
-            { _id: user._id, email: user.email },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        );
-
-        res.json({ token: jwtToken, user });
-    } catch (err) {
-        console.error(err);
-        res.status(401).json({ error: 'Invalid Google token' });
-    }
 }
