@@ -72,10 +72,10 @@ export default function Shop(){
         }, []);
       
         return (
-          <Stack sx={{ px: { xs: 1, md: 4 }, py: { xs: 2, md: 4 }, backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
-            <Grid container spacing={2} >
+          <Stack width="100%" sx={{ px: { xs: 1, md: 4 }, py: { xs: 2, md: 4 }, backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
+            <Grid container spacing={3} >
               {/* Sidebar Filters */}
-              <Grid item size={{xs:12, md:3}}>
+              <Grid item size={{ xs: 12, md: 2,lg:2}} >
                 <Stack
                   sx={{
                     position: { md: 'sticky' },
@@ -91,13 +91,12 @@ export default function Shop(){
                   <RadioBox prices={prices} handleFilters={handleFilters} />
                 </Stack>
               </Grid>
-      
               {/* Product Grid */}
-              <Grid item size={{xs:12, md:9}}>
-                <Grid container spacing={9} sx={{ marginTop: { xs: 2, md: 0 } }}>
+              <Grid item size={{ xs: 12, md: 10,lg:10}} sx={{alignItems:"center"}}>
+                <Grid container spacing={8} sx={{ marginTop: { xs: 2, md: 0, } }}>
                   {isLoading
                     ? Array.from({ length: 8 }).map((_, index) => (
-                        <Grid key={index} item xs={12} sm={6} md={3} lg={3}>
+                        <Grid key={index} item size={{ xs:"12",sm:"12",md:"3",lg:"3"}}>
                           <Skeleton variant="rectangular" height={250} width={250} sx={{ borderRadius: 2 }} />
                           <Skeleton variant="text" width="80%" />
                           <Skeleton variant="text" width="60%" />
@@ -105,12 +104,12 @@ export default function Shop(){
                       ))
                     : products.length > 0
                     ? products.map((product, index) => (
-                        <Grid key={index} item xs={12} sm={6} md={3} lg={3}>
+                      <Grid key={index} item  size={{ xs:"12",sm:"12",md:"3",lg:"3"}}>
                           <Cards product={product} />
-                        </Grid>
+                          </Grid>
                       ))
                     : (
-                      <Grid item xs={12}>
+                      // <Grid  xs={12}>
                         <Box
                           sx={{
                             textAlign: 'center',
@@ -127,15 +126,13 @@ export default function Shop(){
                             Try adjusting your filters or searching something else.
                           </Typography>
                         </Box>
-                      </Grid>
+                      // </Grid>
                     )
                   }
                 </Grid>
               </Grid>
             </Grid>
-      
             {showSnackBar()}
-      
             {/* Scroll to Top Button */}
             <Zoom in={showScroll}>
               <Fab

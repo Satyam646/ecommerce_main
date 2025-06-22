@@ -1,4 +1,4 @@
-import React from "react"
+import {React,useRef} from "react"
 import {Link} from 'react-router-dom' // link is used to avoid reloading a page as href relods the page withRouter used to 
 import Stack from '@mui/material/Stack';
 import "./Menu.css"
@@ -21,6 +21,7 @@ export default function Menu(){
     const LinkStyle={
         textDecoration:"none"
     }
+    const debounceRef = useRef(null);
     const location=useLocation();
     console.log(location);
     const isActive=(location,path)=>{
@@ -30,23 +31,31 @@ export default function Menu(){
             return "grey"
            }
     }
-    const handleSearch=(event)=>{
-      console.log("val",event.target.value);
-      setSearchData(event.target.value);
-      getSearchData(event.target.value);
-  }
-    const getSearchData=(e)=>{
+    const handleSearch = (event) => {
+      const value = event.target.value;
+      setSearchData(value);
+  
+      // Clear previous timer
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      } //  this is used to clear delay of 300ms after every click
+  
+      // Set new debounce timer
+      debounceRef.current = setTimeout(() => {
+        getSearchData(value);
+      }, 400); // 300ms debounce
+    };
+  
+    const getSearchData = (value) => {
       setSearched(true);
-      const query={search:searchData}
+      const query = { search: value };
       const queryString = new URLSearchParams(query).toString();
-      getApi(`searchBy?${queryString}`).then(data=>{
-          if(data?.error){
-          }
-          else {
-            setsearchedProduct(data);
-          }
-      })
-     }
+      getApi(`searchBy?${queryString}`).then(data => {
+        if (!data?.error) {
+          setsearchedProduct(data);
+        }
+      });
+    };
 const SearchBar = () => {
   return (
     <form onSubmit={getSearchData} style={{ width: '100%' }}>
