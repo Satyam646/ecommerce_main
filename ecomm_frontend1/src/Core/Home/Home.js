@@ -141,7 +141,7 @@ export default function Home() {
     if (loading && isArrivals) {
       return Array.from({ length: 4 }).map((_, index) => (
         <Grid key={index} item size={{ xs: "12", sm: "12", md: "3", lg: "3" }}>
-          <Skeleton variant="rectangular" height={260} width="100%" sx={{ borderRadius: 3, mb: 1 }} />
+          <Skeleton variant="rectangular" height={260} width={250} sx={{ borderRadius: 3, mb: 1 }} />
           <Skeleton width="80%" />
           <Skeleton width="60%" />
         </Grid>

@@ -161,7 +161,7 @@ const SearchBar = () => {
           {/* Search, Cart, Account */}
           <Stack direction="row" spacing={2} alignItems="center" mt={{ xs: 1, md: 0 }}>
             {SearchBar()}
-            {JSON.parse(isAuthenticated())?.user?.role === 0&&<Link to="/Cart" style={LinkStyle}>
+            {(JSON.parse(isAuthenticated())==false||JSON.parse(isAuthenticated())?.user?.role === 0)&&<Link to="/Cart" style={LinkStyle}>
               <Badge badgeContent={itemTotal()} color="error">
                 <ShoppingCartIcon
                   sx={{
