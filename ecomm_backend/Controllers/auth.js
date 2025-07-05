@@ -4,7 +4,6 @@
     const express = require('express');
     const { OAuth2Client } = require('google-auth-library');
     const client = new OAuth2Client("138079214967-krcqb0pamcehpenmqb6t7cjice8u2nrb.apps.googleusercontent.com");
-
     const { expressjwt } = require('express-jwt');
     const User = require('../Models/users');
     require('dotenv').config();
@@ -63,7 +62,7 @@
             const { email, password } = req.body;
             // Use async/await instead of callbacks
             const user = await User.findOne({ email });
-            
+            console.log(user);
             if (!user) {
                 return res.status(400).json({
                     error: "User with that Email doesn't exist, Please signup",
