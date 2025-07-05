@@ -6,20 +6,16 @@ export function signout(navigate){
     return fetch((`${API}/signout`),{
         method:"GET"
     }).then(response=>{
-        console.log("signout",response);
         navigate("/signin");
         localStorage.removeItem("jwt");
     }).catch(err=>{console.log(err)});
 }
-
 export const authentication=(data)=>{
-    console.log("data",data);
     localStorage.setItem("jwt",JSON.stringify(data));
     localStorage.setItem("userId",data.user._id);
 }
 export const isAuthenticated=()=>{
     const user=localStorage.getItem("jwt");
-    console.log("user",user);
     if(user){
         return user;
     }else{

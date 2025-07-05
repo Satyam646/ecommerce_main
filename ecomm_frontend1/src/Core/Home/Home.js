@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback, useRef } from "react";
 import { getApi } from "../../api";
 import Grid from "@mui/material/Grid2";
 import {
@@ -8,7 +8,10 @@ import {
   Snackbar,
   Skeleton,
   Box,
-  Divider
+  Divider,
+  CircularProgress,
+  Chip,
+  Button
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from '../../Common/ThemeContext/ThemeContext';
@@ -27,14 +30,39 @@ export default function Home() {
   const [values, setValues] = useState({ productsByArrival: [], productBySell: [], error: "" });
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
+  const [arrivalsPage, setArrivalsPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const images = [bgimage, wallimage];
+  const observer = useRef();
 
-  const getProductByArrival = (bestSellers) => {
-    getApi(`product?sortBy=createdAt&order=desc&limit=8`).then(data => {
-      if (data?.error) setValues(prev => ({ ...prev, error: data.error }));
-      else setValues(prev => ({ ...prev, productBySell: bestSellers, productsByArrival: data?.product }));
-      setLoading(false);
-    });
+  const getProductByArrival = (page = 1) => {
+    const limit = 4;
+    const skip = (page - 1) * limit;
+
+    if (page === 1) setLoading(true);
+    else setLoadingMore(true);
+
+    getApi(`product?sortBy=createdAt&order=desc&limit=${limit}&skip=${skip}`)
+      .then(data => {
+        if (data?.error) {
+          setValues(prev => ({ ...prev, error: data.error }));
+        } else {
+          const newProducts = data.product || [];
+          setHasMore(newProducts.length > 0);
+
+          setValues(prev => ({
+            ...prev,
+            productsByArrival: page === 1
+              ? newProducts
+              : [...prev.productsByArrival, ...newProducts.filter(
+                p => !prev.productsByArrival.some(prevProd => prevProd._id === p._id)
+              )]
+          }));
+        }
+        setLoading(false);
+        setLoadingMore(false);
+      });
   };
 
   const getProductBySell = () => {
@@ -42,7 +70,9 @@ export default function Home() {
       if (data?.error) {
         setValues(prev => ({ ...prev, error: data.error }));
         setLoading(false);
-      } else getProductByArrival(data?.product);
+      } else {
+        setValues(prev => ({ ...prev, productBySell: data.product }));
+      }
     });
   };
 
@@ -52,9 +82,27 @@ export default function Home() {
     });
   };
 
+  const lastProductElementRef = useCallback(node => {
+    if (loading || loadingMore || !hasMore) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        setArrivalsPage(prevPage => prevPage + 1);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [loading, loadingMore, hasMore]);
+
+  useEffect(() => {
+    if (arrivalsPage > 1) {
+      getProductByArrival(arrivalsPage);
+    }
+  }, [arrivalsPage]);
+
   useEffect(() => {
     getCategories();
     getProductBySell();
+    getProductByArrival(1);
   }, []);
 
   const SearchValidation = () => {
@@ -69,7 +117,7 @@ export default function Home() {
   const showSearchedData = () => (
     <Grid container spacing={4}>
       {searchedProduct.map((product, index) => (
-        <Grid item size={{xs:"12",sm:"6",md:"4",lg:"3"}} key={index}>
+        <Grid key={index} item size={{ xs: "12", sm: "12", md: "3", lg: "3" }}>
           <Card product={product} />
         </Grid>
       ))}
@@ -89,25 +137,41 @@ export default function Home() {
     </Snackbar>
   );
 
-  const renderProducts = (products) => {
-    if (loading) {
+  const renderProducts = (products, isArrivals = false) => {
+    if (loading && isArrivals) {
       return Array.from({ length: 4 }).map((_, index) => (
-        <Grid item size={{xs:"12",sm:"6",md:"4",lg:"3"}} key={index}>
-          <Skeleton variant="rectangular" height={300} width={300} sx={{ borderRadius: 2 }} />
+        <Grid key={index} item size={{ xs: "12", sm: "12", md: "3", lg: "3" }}>
+          <Skeleton variant="rectangular" height={260} width="100%" sx={{ borderRadius: 3, mb: 1 }} />
           <Skeleton width="80%" />
           <Skeleton width="60%" />
         </Grid>
       ));
     }
-    return products.map((product, index) => (
-      <Grid item size={{xs:"12",sm:"6",md:"4",lg:"3"}} key={index}>
-        <Card product={product} />
-      </Grid>
-    ));
+
+    return products.map((product, index) => {
+      const isLastProduct = isArrivals && index === products.length - 1;
+      return (
+        <Grid
+          key={index}
+          item
+          size={{ xs: "12", sm: "12", md: "3", lg: "3" }}
+          ref={isLastProduct ? lastProductElementRef : null}
+          sx={{
+            transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            "&:hover": {
+              transform: "translateY(-5px)",
+              boxShadow: 4,
+            }
+          }}
+        >
+          <Card product={product} />
+        </Grid>
+      );
+    });
   };
 
   return (
-    <Box sx={{ px: { xs: 2, sm: 4 }, py: 3 }}>
+    <Box sx={{ px: { xs: 2, sm: 4 }, py: 3, maxWidth: "1440px", mx: "auto" }}>
       {showSnackBar()}
 
       {/* Search Results */}
@@ -121,7 +185,15 @@ export default function Home() {
       </Stack>
 
       {/* Banner Section */}
-      <Box sx={{ mb: 5, borderRadius: 3, overflow: 'hidden', boxShadow: 2 }}>
+      <Box
+        sx={{
+          mb: 6,
+          borderRadius: 3,
+          overflow: 'hidden',
+          boxShadow: 3,
+          maxHeight: "500px"
+        }}
+      >
         <Swiper
           modules={[Autoplay, Pagination, Navigation]}
           spaceBetween={30}
@@ -148,22 +220,31 @@ export default function Home() {
       </Box>
 
       {/* Best Sellers */}
-      <Stack spacing={3} sx={{ mb: 6 }}>
-        <Typography variant="h4" align="center" fontWeight={600} gutterBottom>Best Sellers</Typography>
-        <Divider />
-        <Grid container spacing={6}>
+      <Box sx={{ p: { xs: 2, sm: 4 }, bgcolor: "background.paper", borderRadius: 3, boxShadow: 2, mb: 6 }}>
+        <Typography variant="h4" align="center" fontWeight={700} color="primary" gutterBottom>
+          Best Sellers
+        </Typography>
+        <Divider sx={{ width: 80, borderBottomWidth: 3, borderColor: "primary.main", mx: "auto", mb: 3 }} />
+        <Grid container spacing={{ xs: 2, md: 4 }}>
           {renderProducts(values.productBySell)}
         </Grid>
-      </Stack>
+      </Box>
 
       {/* New Arrivals */}
-      <Stack spacing={3}>
-        <Typography variant="h4" align="center" fontWeight={600} gutterBottom>New Arrivals</Typography>
-        <Divider />
-        <Grid container spacing={6}>
-          {renderProducts(values.productsByArrival)}
+      <Box sx={{ p: { xs: 2, sm: 4 }, bgcolor: "background.default", borderRadius: 3, boxShadow: 1 }}>
+        <Typography variant="h4" align="center" fontWeight={700} color="text.primary" gutterBottom>
+          New Arrivals
+        </Typography>
+        <Divider sx={{ width: 100, borderBottomWidth: 3, borderColor: "secondary.main", mx: "auto", mb: 3 }} />
+        <Grid container spacing={{ xs: 2, md: 4 }}>
+          {renderProducts(values.productsByArrival, true)}
+          {loadingMore && (
+            <Grid item size={{ xs: "12" }} sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+              <CircularProgress />
+            </Grid>
+          )}
         </Grid>
-      </Stack>
+      </Box>
     </Box>
   );
 }

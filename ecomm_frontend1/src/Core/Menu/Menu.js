@@ -43,7 +43,7 @@ export default function Menu(){
       // Set new debounce timer
       debounceRef.current = setTimeout(() => {
         getSearchData(value);
-      }, 400); // 300ms debounce
+      }, 300); // 300ms debounce
     };
   
     const getSearchData = (value) => {
@@ -161,7 +161,7 @@ const SearchBar = () => {
           {/* Search, Cart, Account */}
           <Stack direction="row" spacing={2} alignItems="center" mt={{ xs: 1, md: 0 }}>
             {SearchBar()}
-            <Link to="/Cart" style={LinkStyle}>
+            {JSON.parse(isAuthenticated())?.user?.role === 0&&<Link to="/Cart" style={LinkStyle}>
               <Badge badgeContent={itemTotal()} color="error">
                 <ShoppingCartIcon
                   sx={{
@@ -173,7 +173,7 @@ const SearchBar = () => {
                   }}
                 />
               </Badge>
-            </Link>
+            </Link>}
   
             <Link
               to={

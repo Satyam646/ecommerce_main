@@ -269,8 +269,9 @@ exports.list = async (req,res) => {
     let order = req.query.order ? req.query.order: 'asc'; // order into ascending or descending.
     let sortBy= req.query.sortBy ? req.query.sortBy: '_id'; // use to sort it by any parameter.
     let limit = req.query.limit ? parseInt(req.query.limit): 8; // use to limit the result.
+    let skip = req.query.skip ? parseInt(req.query.skip): 0;
     try{
-    const product = await Product.find().select('-photo').populate('category').sort([[sortBy, order]]).limit(limit)
+    const product = await Product.find().select('-photo').populate('category').sort([[sortBy, order]]).limit(limit).skip(skip)
     // if(!product){
     //     return res.status(400).json({
     //         error:"products not found"
