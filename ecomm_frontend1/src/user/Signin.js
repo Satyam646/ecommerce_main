@@ -169,7 +169,7 @@ export default function Signin(){
         <DialogContent>
           <Typography variant="body1"><strong>Admin User</strong></Typography>
           <Typography>Email: <code>satyammishra@gmail.com</code></Typography>
-          <Typography>Password: <code>satyam@1</code></Typography>
+          <Typography>Password: <code>Satyam@1('s' is in uppercaseletter)</code></Typography>
           <Typography variant="body1"><strong>Regular User</strong></Typography>
           <Typography>Email: <code>satyam.myname0702@gmail.com</code></Typography>
           <Typography>Password: <code>Satyam@1('s' is in uppercaseletter)</code></Typography>
