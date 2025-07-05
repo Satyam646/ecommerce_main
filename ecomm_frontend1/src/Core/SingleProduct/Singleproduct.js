@@ -49,7 +49,7 @@ export default function SingleProduct() {
             return (
                 <Grid container spacing={4} alignItems="center">
                     <Grid xs={12} md={6}>
-                        <Skeleton variant="rectangular" height={450} sx={{ borderRadius: 2 }} />
+                        <Skeleton variant="rectangular" height={250} width={250} sx={{ borderRadius: 2 }} />
                     </Grid>
                     <Grid xs={12} md={6}>
                         <Stack spacing={2}>
