@@ -138,17 +138,19 @@ export default function Home() {
   );
 
   const renderProducts = (products, isArrivals = false) => {
-    if (loading && isArrivals) {
-      return Array.from({ length: 4 }).map((_, index) => (
+    if (loading&&isArrivals) {
+      return (<Grid container spacing={10} alignItems="center">
+        {Array.from({ length: 4 }).map((_, index) => (
         <Grid key={index} item size={{ xs: "12", sm: "12", md: "3", lg: "3" }}>
           <Skeleton variant="rectangular" height={260} width={250} sx={{ borderRadius: 3, mb: 1 }} />
           <Skeleton width="80%" />
           <Skeleton width="60%" />
         </Grid>
-      ));
+      ))};
+      </Grid>)
     }
 
-    return products.map((product, index) => {
+    return products?.map((product, index) => {
       const isLastProduct = isArrivals && index === products.length - 1;
       return (
         <Grid
@@ -226,7 +228,7 @@ export default function Home() {
         </Typography>
         <Divider sx={{ width: 80, borderBottomWidth: 3, borderColor: "primary.main", mx: "auto", mb: 3 }} />
         <Grid container spacing={{ xs: 2, md: 4 }}>
-          {renderProducts(values.productBySell)}
+          {renderProducts(values.productBySell,true)}
         </Grid>
       </Box>
 
