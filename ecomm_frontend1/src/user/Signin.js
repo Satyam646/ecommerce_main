@@ -97,7 +97,7 @@ export default function Signin(){
 
     return (
     <Stack
-      height="100vh"
+      // height="100vh"
       sx={{
         padding: { xs: '20px', md: '60px' },
         background: 'linear-gradient(135deg, #E0F7FA, #FFFFFF)',
@@ -130,7 +130,7 @@ export default function Signin(){
         }}
       >
         <Grid container spacing={9} alignItems="center">
-          <Grid item xs={12} md={4}>
+          <Grid item size={{ xs: "12", sm: "12", md: "3", lg: "4" }}>
             <Stack spacing={3}>
               <Typography variant="h4" fontWeight="bold" color="#0D47A1">
                 Welcome Back!
@@ -148,7 +148,7 @@ export default function Signin(){
               </Stack>
             </Stack>
           </Grid>
-          <Grid item xs={12} md={8}>
+          <Grid item size={{ xs: "12", sm: "12", md: "6", lg: "8" }}>
             <img
               src={bookBecho}
               alt="Login Illustration"
