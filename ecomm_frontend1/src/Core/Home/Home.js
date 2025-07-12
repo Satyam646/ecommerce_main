@@ -35,7 +35,6 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(true);
   const images = [bgimage, wallimage];
   const observer = useRef();
-
   const getProductByArrival = (page = 1) => {
     const limit = 4;
     const skip = (page - 1) * limit;
@@ -139,12 +138,12 @@ export default function Home() {
 
   const renderProducts = (products, isArrivals = false) => {
     if (loading&&isArrivals) {
-      return (<Grid container spacing={10} alignItems="center">
+      return (<Grid container spacing={10}>
         {Array.from({ length: 4 }).map((_, index) => (
         <Grid key={index} item size={{ xs: "12", sm: "12", md: "3", lg: "3" }}>
-          <Skeleton variant="rectangular" height={260} width={250} sx={{ borderRadius: 3, mb: 1 }} />
-          <Skeleton width="80%" />
-          <Skeleton width="60%" />
+          <Skeleton variant="rectangular" height={260} width={250} sx={{ borderRadius: 3, mb: 1}} />
+          <Skeleton width="80%" sx={{ borderRadius: 3, mb: 1,ml:4}}/>
+          <Skeleton width="60%" sx={{ borderRadius: 3, mb: 1,ml:4}}/>
         </Grid>
       ))};
       </Grid>)
@@ -248,5 +247,5 @@ export default function Home() {
         </Grid>
       </Box>
     </Box>
-  );
+  )
 }
