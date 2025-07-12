@@ -10,8 +10,8 @@ import {
   Box,
   Divider,
   CircularProgress,
-  Chip,
-  Button
+  useMediaQuery,
+  useTheme
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from '../../Common/ThemeContext/ThemeContext';
@@ -27,6 +27,7 @@ import 'swiper/css/navigation';
 export default function Home() {
   const { SnackBar, toggleSnackBar, searchData, searchedProduct, searched } = useContext(ThemeContext);
   const navigate = useNavigate();
+  const theme = useTheme();
   const [values, setValues] = useState({ productsByArrival: [], productBySell: [], error: "" });
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
@@ -35,6 +36,7 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(true);
   const images = [bgimage, wallimage];
   const observer = useRef();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const getProductByArrival = (page = 1) => {
     const limit = 4;
     const skip = (page - 1) * limit;
@@ -141,11 +143,11 @@ export default function Home() {
       return (<Grid container spacing={10}>
         {Array.from({ length: 4 }).map((_, index) => (
         <Grid key={index} item size={{ xs: "12", sm: "12", md: "3", lg: "3" }}>
-          <Skeleton variant="rectangular" height={260} width={250} sx={{ borderRadius: 3, mb: 1}} />
+          <Skeleton variant="rectangular" height={260} width={250} sx={{ borderRadius: 3, mb: 1,ml:isMobile?4:0}} />
           <Skeleton width="80%" sx={{ borderRadius: 3, mb: 1,ml:4}}/>
           <Skeleton width="60%" sx={{ borderRadius: 3, mb: 1,ml:4}}/>
         </Grid>
-      ))};
+      ))}
       </Grid>)
     }
 
