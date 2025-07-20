@@ -5,7 +5,6 @@ export default function AddressForm({ address, setAddress }) {
         const { name, value } = e.target;
         setAddress(prev => ({ ...prev, [name]: value }));
     };
-
     return (
         <Stack spacing={2}>
             <Typography variant="h6">Shipping Address</Typography>

@@ -1,5 +1,4 @@
 import { Button, Stack, Typography, CircularProgress } from "@mui/material";
-
 export default function CheckoutSummary({ total, addressValid, onPay, loading }) {
     return (
         <Stack spacing={2}>

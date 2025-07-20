@@ -1,17 +1,6 @@
 
 const {CartItem, Order } = require("../Models/order");
-
 exports.create = async (req,res) => {
-    // req.body.user = req.profile;
-    // const order= new Order(req.body);
-    // order.save((error,data)=>{
-    //     if(error){
-    //         return res.status(400).json({
-    //             error:errorHandler(error)
-    //         });
-    //     }
-    //     res.json(data);
-    // });
     try {
         req.body.user = req.profile;
         const order = new Order(req.body);
@@ -36,15 +25,6 @@ exports.orderById = async (req, res, next, id) => {
     }
 };
 exports.listOrders = async (req,res) =>{
-    // Order.find().populate('user',"_id","name","address").sort({createdAt:-1}).exec((err,orders)=>{
-    //     if(err){
-    //         return res.status(400).json({
-    //             error:err
-    //         })
-    //     }
-    //     return res.status(200).json(orders);
-    // })
- // created
  try{ 
     // find() It will display all orders in the database.
      const order=await Order.find().populate('user',"_id name address").sort({createdAt:-1});

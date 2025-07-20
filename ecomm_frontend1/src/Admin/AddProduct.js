@@ -1,174 +1,190 @@
-import React, { useEffect } from "react"
-import TextField from '@mui/material/TextField';
-import {Button ,Typography,Input } from "@mui/material";
-import { Stack ,MenuItem,Select,InputLabel,FormControl} from "@mui/material";
-import { useState } from "react";
-import { postAuthApi } from "../api";
+import React, { useEffect, useState } from "react";
+import {
+  TextField,
+  Button,
+  Typography,
+  Input,
+  Stack,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Alert,
+  CircularProgress,
+  Paper
+} from "@mui/material";
 import { isAuthenticated } from "../Common/auth/auth";
-import { postFormData } from "../api";
-import { getApi } from "../api";
+import { postFormData, getApi } from "../api";
 
+export default function AddProduct() {
+  const { user, token } = isAuthenticated();
+  const [values, setValues] = useState({
+    name: "",
+    description: "",
+    price: "",
+    categories: [],
+    category: "",
+    shipping: "",
+    quantity: "",
+    photo: null,
+    loading: false,
+    error: "",
+    success: false,
+    createdProduct: "",
+    formData: new FormData(),
+  });
 
+  const {
+    name, description, price, categories, category,
+    shipping, quantity, loading, error, success, createdProduct, formData
+  } = values;
 
-export default function AddProduct(){
-    const { user,token } = isAuthenticated();
-    const [values,setValues] = useState({
-        name:"",
-        description:"",
-        price:"",
-        categories:[],
-        category:"",
-        shipping:"",
-        quantity:"",
-        photo:"",
-        loading:false,
-        error:"",
-        createdProduct:"",
-        redirectToProfile:false,
-        formData:new FormData(),
-    })
-    const {  name,
-        description,
-        price,
-        categories,
-        category,
-        shipping,
-        quantity,
-        loading,
-        error,
-        createdProduct,
-        redirectToProfile,
-        formData
-    }=values;
-        
-       
-        const getCategories =()=>{
-            getApi("category").then(data=>{
-                if(data?.error){
-                   setValues({...values,error:data?.error});
-                }else{
-                    setValues({...values,categories:data?.category});
-                }
-            })
-        }
-        
-       useEffect(()=>{
-            // setValues({...values,formData : new FormData()});
-            getCategories();
-           
-       },[])
-       console.log(values?.categories);
-       const handleChange = (name)=>(event)=> {
-        // console.log("file",event.target.files[0]);
-        const value = name=='photo'? event.target?.files[0]:event.target.value;
-        formData.set(name,value);
-        setValues({...values,error:false,success:false,[name]:value});
-       }
-          const handleSubmit= async(e)=>{
-         
-            console.log("hello",e);
-                  e.preventDefault();
-                  for (let [key, value] of formData.entries()) {
-                    console.log(key, value);
-                  }
-                  setValues({...values,loading:true});
-                  console.log("value",formData);
-                  const userId=localStorage.getItem("userId");
-               
-                  const token=JSON.parse(isAuthenticated()).token
-                   const result = await postFormData(`product/create/${userId}`,formData,token);
-                //   console.log(result);  
-                const res=await result.json(); 
-                  if(!result.ok){
-                    // console.log("err",await result.json());
-                    setValues({...values,error:res?.error,loading:false})
-                  }else{
-                    setValues({...values,error:false,success:true,loading:false,createdProduct:res.name})
-                  }
-              }
-     
-       const showerror=()=>{
-               return(
-                   values.error&&<Stack sx={{bgcolor:"red",padding:"10px" , boxSizing:"border-box"}}>{values.error}</Stack>
-               )
-           }
-       const showSuccess = () =>{
-                   return (
-                       values.success==true&&<Stack sx={{bgcolor:"lightgreen",padding:"10px" , boxSizing:"border-box"}}>{createdProduct} Added Successfully</Stack>
-                   )
-               }
-       const showForm = () =>{
-          return(
-          <form  onSubmit={handleSubmit}>
-          <Stack spacing ={3} sx={{padding:"10px"}}>
-          {/* <Typography>Email</Typography> */}
-            <Stack>
-             <Typography>Add Photo</Typography>
-            <label>
-            <input type="file" name="photo" accept="image/*" onChange={handleChange("photo")}/>
-            </label>
-            </Stack>
-         <TextField
-           id="outlined-error"
-           label="Product Name"
-           value={name}
-           required
-           onChange={handleChange('name')}
-         />
-         <Input  multiline  onChange={handleChange("description")}  placeholder="Add Product Description..." />
-         <TextField
-           id="outlined-error"
-           label="price"
-           value={price}
-           required
-           onChange={handleChange('price')}
-         />
-           <FormControl fullWidth>
-      <InputLabel id="demo-simple-select-label">Category</InputLabel>
-      <Select
-       value={category}
-       label="category"
-       onChange={handleChange("category")}
-     >
-       {categories?.map((data,indx)=>
-        (<MenuItem key={indx} value={data?._id}>{data?.name}</MenuItem>)
-       )}
-       </Select>
-    </FormControl>
-         <TextField
-           id="outlined-error"
-           type="number"
-           label="quantity"
-           value={quantity}
-           required
-           onChange={handleChange('quantity')}
-         />
-         <FormControl fullWidth>
-      <InputLabel id="demo-simple-select-label">Shipping</InputLabel>
-      <Select
-       value={shipping}
-       label="shipping"
-       onChange={handleChange("shipping")}
-     >
-       <MenuItem value={1}>Yes</MenuItem>
-      <MenuItem value={0}>No</MenuItem>
-      </Select>
-    </FormControl>
-         {/* <Typography>Password</Typography> */}
-         <Stack  sx={{alignSelf:"start"}} spacing={3}>
-         <Button variant="outlined" type="submit" color="success">Create Product</Button>
-         </Stack>
-         </Stack>
-         </form>
-      )}
+  useEffect(() => {
+    getApi("category").then(data => {
+      if (data?.error) {
+        setValues(prev => ({ ...prev, error: data.error }));
+      } else {
+        setValues(prev => ({ ...prev, categories: data.category }));
+      }
+    });
+  }, []);
 
+  const handleChange = (name) => (event) => {
+    const value = name === "photo" ? event.target.files[0] : event.target.value;
+    formData.set(name, value);
+    setValues(prev => ({
+      ...prev,
+      [name]: value,
+      error: "",
+      success: false,
+    }));
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setValues(prev => ({ ...prev, loading: true }));
 
-    return (
-     <Stack>
-     {showSuccess()}
-     {showerror()}
-     {showForm()}
-     </Stack>
-    )
-} 
+    const userId = localStorage.getItem("userId");
+    const token = JSON.parse(isAuthenticated()).token;
+    const result = await postFormData(`product/create/${userId}`, formData, token);
+    const res = await result.json();
+
+    if (!result.ok) {
+      setValues(prev => ({ ...prev, error: res?.error || "Failed to create product", loading: false }));
+    } else {
+      setValues(prev => ({
+        ...prev,
+        name: "",
+        description: "",
+        price: "",
+        category: "",
+        shipping: "",
+        quantity: "",
+        photo: null,
+        success: true,
+        error: "",
+        loading: false,
+        createdProduct: res.name,
+        formData: new FormData(),
+      }));
+    }
+  };
+
+  return (
+    <Paper elevation={3} sx={{ padding: 4, maxWidth: 600, margin: "auto", mt: 5 }}>
+      <Typography variant="h5" gutterBottom>
+        Add New Product
+      </Typography>
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {success && <Alert severity="success" sx={{ mb: 2 }}>{createdProduct} added successfully!</Alert>}
+      <form onSubmit={handleSubmit}>
+        <Stack spacing={3}>
+          <Stack spacing={1}>
+            <Button variant="contained" component="label">
+              Upload Product Image
+              <input hidden type="file" accept="image/*" onChange={handleChange("photo")} />
+            </Button>
+            {values.photo && (
+              <Typography variant="body2" color="textSecondary">
+                Selected file: {values.photo.name}
+              </Typography>
+            )}
+            {values.photo && (
+              <img
+                src={URL.createObjectURL(values.photo)}
+                alt="Preview"
+                style={{ maxWidth: "100%", height: "300", width:"200", borderRadius: 8, marginTop: 8 }}
+              />
+            )}
+          </Stack>
+          <TextField
+            label="Product Name"
+            value={name}
+            onChange={handleChange("name")}
+            required
+            fullWidth
+          />
+          <TextField
+            label="Product Description"
+            value={description}
+            onChange={handleChange("description")}
+            multiline
+            rows={3}
+            fullWidth
+          />
+          <TextField
+            label="Price"
+            value={price}
+            onChange={handleChange("price")}
+            type="number"
+            required
+            fullWidth
+          />
+          <FormControl fullWidth>
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={category}
+              onChange={handleChange("category")}
+              label="Category"
+              required
+            >
+              {categories.map((cat) => (
+                <MenuItem key={cat._id} value={cat._id}>{cat.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            label="Quantity"
+            value={quantity}
+            onChange={handleChange("quantity")}
+            type="number"
+            required
+            fullWidth
+          />
+          <FormControl fullWidth>
+            <InputLabel>Shipping</InputLabel>
+            <Select
+              value={shipping}
+              onChange={handleChange("shipping")}
+              label="Shipping"
+              required
+            >
+              <MenuItem value={1}>Yes</MenuItem>
+              <MenuItem value={0}>No</MenuItem>
+            </Select>
+          </FormControl>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Button
+              type="submit"
+              variant="contained"
+              color="success"
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : "Create Product"}
+            </Button>
+          </Stack>
+        </Stack>
+      </form>
+    </Paper>
+  );
+}

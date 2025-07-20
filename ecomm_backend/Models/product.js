@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const Category = require("./category");
 const {ObjectId} = mongoose.Schema
-
-
 const productSchema=new mongoose.Schema({
     name:{
      type:String,
@@ -43,5 +41,4 @@ const productSchema=new mongoose.Schema({
     }
 },{timestamps:true}
 );
-
 module.exports = mongoose.model("Product",productSchema);

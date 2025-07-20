@@ -7,7 +7,6 @@ import { isAuthenticated } from "../../Common/auth/auth";
 import { useNavigate } from "react-router-dom";
 import { getApiAuth, postAuthApi } from "../../api";
 import DropIn from 'braintree-web-drop-in-react';
-
 export default function Cart() {
     const [products, setProducts] = useState([]);
     const [data, setData] = useState({
@@ -132,95 +131,95 @@ export default function Cart() {
                 <Typography variant="h6">Your Cart is empty... continue shopping!</Typography>
             ) : (
                 <Grid container spacing={30}>
-    <Grid xs={12} md={3}>
-        <Stack spacing={2}>
-            {products.map((product, index) => (
-                <Card
-                    key={index}
-                    product={product}
-                    onCart={false}
-                    UpdateCart={updateProducts}
-                />
-            ))}
-        </Stack>
-    </Grid>
-
-    <Grid xs={12} md={9} display="flex">
-        <Stack elevation={3} sx={{ padding: 3,width:"800px"}}>
-            <Typography variant="h5" gutterBottom>Order Summary</Typography>
-            <Typography variant="subtitle1">Total Price: ${getTotal()}</Typography>
-
-            {!showPaymentUI ? (
-                <Box>
-                    <Box>
-                        <Typography variant="h6" mt={2}>Shipping Address</Typography>
-                        <Stack spacing={2} mt={1}>
-                            <TextField
-                                label="Street Address"
-                                name="street"
-                                value={data.address.street}
-                                onChange={handleAddressChange}
-                                fullWidth
-                            />
-                            <TextField
-                                label="City"
-                                name="city"
-                                value={data.address.city}
-                                onChange={handleAddressChange}
-                                fullWidth
-                            />
-                            <TextField
-                                label="State"
-                                name="state"
-                                value={data.address.state}
-                                onChange={handleAddressChange}
-                                fullWidth
-                            />
-                            <TextField
-                                label="Pincode"
-                                name="pincode"
-                                value={data.address.pincode}
-                                onChange={handleAddressChange}
-                                fullWidth
-                            />
+                    <Grid xs={12} md={3}>
+                        <Stack spacing={2}>
+                            {products.map((product, index) => (
+                                <Card
+                                    key={index}
+                                    product={product}
+                                    onCart={false}
+                                    UpdateCart={updateProducts}
+                                />
+                            ))}
                         </Stack>
-                        {isAuthenticated() ? (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={proceedToPayment}
-                            fullWidth
-                            sx={{ mt: 3 }}
-                        >
-                            Proceed to Pay
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="contained"
-                            onClick={() => navigate("/signin")}
-                            fullWidth
-                            sx={{ mt: 3 }}
-                        >
-                            Please Sign In
-                        </Button>
-                    )}
-                    </Box>
+                    </Grid>
 
-                    
-                </Box>
-            ) : (
-                <>
-                    {showDropIn()}
-                    {data.success && (
-                        <Stack sx={{ bgcolor: "green", color: "white", p: 1, borderRadius: 1, mt: 2 }}>
-                            <Typography>Payment Successful!</Typography>
+                    <Grid xs={12} md={9} display="flex">
+                        <Stack elevation={3} sx={{ padding: 3, width: "800px" }}>
+                            <Typography variant="h5" gutterBottom>Order Summary</Typography>
+                            <Typography variant="subtitle1">Total Price: ${getTotal()}</Typography>
+
+                            {!showPaymentUI ? (
+                                <Box>
+                                    <Box>
+                                        <Typography variant="h6" mt={2}>Shipping Address</Typography>
+                                        <Stack spacing={2} mt={1}>
+                                            <TextField
+                                                label="Street Address"
+                                                name="street"
+                                                value={data.address.street}
+                                                onChange={handleAddressChange}
+                                                fullWidth
+                                            />
+                                            <TextField
+                                                label="City"
+                                                name="city"
+                                                value={data.address.city}
+                                                onChange={handleAddressChange}
+                                                fullWidth
+                                            />
+                                            <TextField
+                                                label="State"
+                                                name="state"
+                                                value={data.address.state}
+                                                onChange={handleAddressChange}
+                                                fullWidth
+                                            />
+                                            <TextField
+                                                label="Pincode"
+                                                name="pincode"
+                                                value={data.address.pincode}
+                                                onChange={handleAddressChange}
+                                                fullWidth
+                                            />
+                                        </Stack>
+                                        {isAuthenticated() ? (
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={proceedToPayment}
+                                                fullWidth
+                                                sx={{ mt: 3 }}
+                                            >
+                                                Proceed to Pay
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => navigate("/signin")}
+                                                fullWidth
+                                                sx={{ mt: 3 }}
+                                            >
+                                                Please Sign In
+                                            </Button>
+                                        )}
+                                    </Box>
+
+
+                                </Box>
+                            ) : (
+                                <>
+                                    {showDropIn()}
+                                    {data.success && (
+                                        <Stack sx={{ bgcolor: "green", color: "white", p: 1, borderRadius: 1, mt: 2 }}>
+                                            <Typography>Payment Successful!</Typography>
+                                        </Stack>
+                                    )}
+                                </>
+                            )}
                         </Stack>
-                    )}
-                </>
-            )}
-        </Stack>
-    </Grid>
-</Grid>
+                    </Grid>
+                </Grid>
 
             )}
         </Stack>
