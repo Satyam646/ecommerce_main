@@ -20,41 +20,6 @@
         res.status(500).send(error.errorResponse);
         }
         };
-    // user.save((err,res)=>{
-    //     if(err){
-           
-    //     }
-    //     res.json({
-    //           user
-    //     });
-    // });
-    // this save method is use to save our request body to our database.
-    // exports.signin=(req,res)=>{
-         
-    //     const { email,password}= req.body;
-    //     User.findOne({email},(err , user)=>{
-    //            if(err||!user){
-    //             return res.status(400).json({
-    //                 error:"User with that Email doesn exist, Please signup",
-    //             });
-    //            }
-    //            //if user found make sure to match email and password
-    //            //if email is found make sure that password is matched for that we have to authenticate user
-    //              if(!user.authenticate(password)){
-    //                 return res.status(401).json({
-    //                     error:"Email_id and password doesnot match"
-    //                 })
-    //              }
-    //            //let suppose password also matched
-    //            //we to generate sigined token to send back to frontend client
-    //            const token = jwt.sign({_id:user._id},process.env.JWT_SECRET)
-    //            //persist token as 't' in cookie with expire date
-    //            res.cookie('t',token,{expire:new Date() + 9999})  //new date sets new date and 9999 is added to add that much time to that for expiry
-    //            // return user and token to frontend client
-    //            const {_id,name,email,role} = user
-    //            return res.status(200).json({token, user:{_id,email,name,role}})
-    //     })
-    // }
     exports.signin = async (req, res) => {
         
         
