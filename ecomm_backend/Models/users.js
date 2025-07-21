@@ -46,7 +46,6 @@ userSchema.virtual('password')// this virtual field doesnot exists in our databa
     return this._password  // when want to see actual password
 });
 // now we write method encryptPassword which encrypt the actual password which we are taking from the user.
-
 userSchema.methods = {
     // authenticate : function(plaintext){
     //     return this.encryptPassword(plaintext)===this.hashed_password

@@ -12,12 +12,10 @@ import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "../Common/auth/auth";
 import { getAllProducts, DeleteProduct } from "./Adminapi";
 import { API } from "../config";
-
 export default function ManageProducts() {
   const [products, setProducts] = useState([]);
   const { user, token } = JSON.parse(isAuthenticated());
   const navigate = useNavigate();
-
   const loadProducts = () => {
     getAllProducts().then(data => {
       if (data?.error) {
@@ -27,7 +25,6 @@ export default function ManageProducts() {
       }
     });
   };
-
   const removeProduct = (productId, userId, tokenId) => {
     DeleteProduct(productId, userId, tokenId).then(data => {
       if (data?.error) {
@@ -38,7 +35,6 @@ export default function ManageProducts() {
       }
     });
   };
-
   const showList = () => (
     <Stack spacing={3} sx={{ width: "100%", maxWidth: "900px" }}>
       {products?.map(p => (
@@ -82,7 +78,6 @@ export default function ManageProducts() {
                   Update
                 </Button>
               </Grid>
-
               <Grid key={`${p?._id}-delete`} item size={{ xs: "12", sm: "3" }}>
                 <Button
                   variant="contained"
@@ -99,11 +94,9 @@ export default function ManageProducts() {
       ))}
     </Stack>
   );
-
   useEffect(() => {
     loadProducts();
   }, []);
-
   return (
     <Box
       sx={{

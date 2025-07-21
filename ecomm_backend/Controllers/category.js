@@ -1,6 +1,5 @@
 const Category = require("../Models/category");
 const { findById } = require("../Models/product");
-
 exports.categoryById =  async (req,res,next,id) =>{
     try{
         let category=await Category.findById(id);
@@ -26,16 +25,6 @@ exports.create = async (req,res) => {
     } catch(error){
         res.status(500).send({error});
     }
-    // try{
-    //     const user = new User(req.body);
-    //     const savedUser = await user.save(); // Use await to handle the promise
-    //     savedUser.hashed_password=undefined; // not need we to enter this use virtual password there
-    //     savedUser.salt=undefined;
-    //     res.status(201).send(savedUser);
-    //     } catch (error) {
-    //         // error
-    //     res.status(500).send(error.errorResponse);
-    //     }
 }
 exports.update=async (req,res)=>{
     const category=req.category;

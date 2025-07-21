@@ -1,7 +1,6 @@
 const User = require('../Models/users'); // importing models
 const braintree = require('braintree');
 require('dotenv').config()
-
 // conection with braintree
 const gateway = new braintree.BraintreeGateway({
     environment: braintree.Environment.Sandbox, // Ensure correct spelling
@@ -9,7 +8,6 @@ const gateway = new braintree.BraintreeGateway({
     publicKey: process.env.BRAINTREE_PUBLIC_KEY,
     privateKey: process.env.BRAINTREE_PRIVATE_KEY,
 });
-
 exports.generateToken = (req, res) => {
     gateway.clientToken.generate({}, (err, response) => {
         if (err) {
@@ -35,9 +33,5 @@ exports.processPayment = (req,res) =>{
             res.json(result);
         }
     })
-
-
-
-
 }
 

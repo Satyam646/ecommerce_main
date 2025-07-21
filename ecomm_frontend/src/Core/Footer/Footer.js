@@ -1,6 +1,5 @@
 import React from 'react';
 import { Stack, Typography, Divider, Box } from '@mui/material';
-
 const Footer = () => (
   <Box
     component="footer"
@@ -34,7 +33,7 @@ const Footer = () => (
         Contact: <a href="mailto:support@bookbecho.com" style={{ color: '#ffffff', textDecoration: 'underline' }}>
           support@bookbecho.com
         </a>{' '}
-        | +91 98765 43210
+        | +917482990927
       </Typography>
       <Typography variant="caption" sx={{ opacity: 0.5 }}>
         &copy; {new Date().getFullYear()} Book Becho. All Rights Reserved.

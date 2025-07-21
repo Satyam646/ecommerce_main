@@ -1,7 +1,5 @@
 const { Order } = require("../Models/order");
 const User = require("../Models/users");
-
-
 exports.userById = async (req, res, next, id) => {
     try {
         const user = await User.findById(id);
@@ -19,15 +17,12 @@ exports.userById = async (req, res, next, id) => {
     }
 };
 exports.read = (req,res) => {
-   
       req.profile.hashed_password=undefined;
       req.profile.salt=undefined;
       return res.status(200).json(
         req.profile
-      )    
-     
+      )
 }
-
 exports.update = async (req,res) => {
     try{
 const user = await User.findOneAndUpdate(
@@ -56,39 +51,22 @@ exports.addOrderToUserHistory = async (req,res,next) =>{
           amount:req.body.amount,
         })
     })
-    // User.findOneAndUpdate(
-    //     {_id:req.profile._id},
-    //     {$push:{history:history}},
-    //     {new:true}, // it ensures that updated user history is returned
-    //     (error,data) =>{
-    //     if(error){
-    //         return res.status(400).json({
-    //             error:"could not update userPurchase history",
-    //         })
-    //     }
-    //     next();
-    //     }
-      
-    // )
     const updatedUser = await User.findOneAndUpdate(
         { _id: req.profile._id },
         { $push: { history: history } },
         { new: true } // Ensures the updated document is returned
     );
-
     if (!updatedUser) {
         return res.status(400).json({
             error: "User not found",
         });
     }
-
     next(); // Pass control to the next middleware
    }catch(error) {
     return res.status(400).json({
         error: "Could not update user purchase history",
     });
    }
-
 }
 exports.purchaseHistory = async (req,res)=>{
     console.log(req);
