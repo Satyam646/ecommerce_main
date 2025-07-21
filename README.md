@@ -92,9 +92,6 @@ PWA support
 🤝 Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
 
-📄 License
-This project is licensed under the MIT License.
-
 📬 Contact
 Satyam Mishra
 📧 satyam.myname0702@gmail.com
