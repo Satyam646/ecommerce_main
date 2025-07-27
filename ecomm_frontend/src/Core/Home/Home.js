@@ -24,6 +24,7 @@ import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import ResponsiveImageSlider from './Slider';
 
 export default function Home() {
   const { SnackBar, toggleSnackBar, searchData, searchedProduct, searched } = useContext(ThemeContext);
@@ -35,7 +36,7 @@ export default function Home() {
   const [arrivalsPage, setArrivalsPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const images = [bgimage, wallimage];
+  const myImages = [bgimage, wallimage];
   const observer = useRef();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const getProductByArrival = (page = 1) => {
@@ -189,39 +190,9 @@ export default function Home() {
       </Stack>
 
       {/* Banner Section */}
-      <Box
-        sx={{
-          mb: 6,
-          borderRadius: 3,
-          overflow: 'hidden',
-          boxShadow: 3,
-          maxHeight: "500px"
-        }}
-      >
-        <Swiper
-          modules={[Autoplay, Pagination, Navigation]}
-          spaceBetween={30}
-          centeredSlides
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
-          pagination={{ clickable: true }}
-          navigation
-          style={{ width: "100%", height: "auto" }}
-        >
-          {images.map((url, index) => (
-            <SwiperSlide key={index} style={{ display:"flex",justifyContent:"center",alignItems:"center"}}>
-              <img
-                src={url}
-                alt={`slide-${index}`}
-                style={{
-                  width: "100%",
-      height: "500px",
-      objectFit: "cover"
-                }}
-              />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </Box>
+     <ResponsiveImageSlider images={myImages} />
+
+
 
       {/* Best Sellers */}
       <Box sx={{ p: { xs: 2, sm: 4 }, bgcolor: "background.paper", borderRadius: 3, boxShadow: 2, mb: 6 }}>
