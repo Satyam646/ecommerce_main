@@ -17,7 +17,7 @@ import Chatbot from "../ChatBot/bot.js";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from '../../Common/ThemeContext/ThemeContext';
 import Card from "./Cards";
-import bgimage from "../../Image/bgimage.jpg";
+import bgimage from "../../Image/bgimage.png";
 import wallimage from "../../Image/wallimage.png";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
@@ -208,14 +208,14 @@ export default function Home() {
           style={{ width: "100%", height: "auto" }}
         >
           {images.map((url, index) => (
-            <SwiperSlide key={index} style={{ display: "flex", justifyContent: "center" }}>
+            <SwiperSlide key={index} style={{ display:"flex",justifyContent:"center",alignItems:"center"}}>
               <img
                 src={url}
                 alt={`slide-${index}`}
                 style={{
                   width: "100%",
-                  maxHeight: "500px",
-                  objectFit: "cover"
+      height: "500px",
+      objectFit: "cover"
                 }}
               />
             </SwiperSlide>
