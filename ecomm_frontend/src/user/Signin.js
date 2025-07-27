@@ -1,180 +1,164 @@
-import React from "react";
-import TextField from '@mui/material/TextField';
-import {Box, Button ,Typography,Paper, Dialog, DialogTitle, DialogContent } from "@mui/material";
-import { Google, Apple } from '@mui/icons-material';
-import { Stack } from "@mui/material";
-import  Grid from "@mui/material/Grid2";
-import { postApi }   from "../api";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { authentication } from "../Common/auth/auth"; 
-import "../Common/Loader.css"
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import {
+  Box, Button, Typography, Paper, Dialog, DialogTitle, DialogContent,
+  Stack, TextField
+} from "@mui/material";
 import { GoogleLogin } from '@react-oauth/google';
+import { Link, useNavigate } from "react-router-dom";
+import { postApi } from "../api";
+import { authentication } from "../Common/auth/auth";
+import bookBecho from "../Image/BookBecho.png";
+import "../Common/Loader.css";
 import { API } from "../config";
-import bookBecho from "../Image/BookBecho.png"
+export default function Signin() {
+  const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [values, setValues] = useState({
+    email: "",
+    password: "",
+    error: "",
+    success: false,
+    loading: false,
+  });
 
-export default function Signin(){
-    const navigate=useNavigate();
-    const [values,setValues] = useState({
-        email:"",
-        password:"",
-        error:"",
-        success:false,
-        loading:false,
+  const { email, password } = values;
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setValues({ ...values, loading: true });
+    const result = await postApi('signin', { email, password });
+    const res = await result.json();
+    if (!result.ok) {
+      setValues({ ...values, error: res?.error, loading: false });
+    } else {
+      setValues({ ...values, error: false, success: true, loading: false });
+      authentication(res);
+      navigate("/");
+    }
+  };
+
+  const handleChange = name => event => {
+    setValues({ ...values, error: false, success: false, [name]: event.target.value });
+  };
+
+  const handleSuccess = async (credentialResponse) => {
+    const res = await fetch(`${API}api/google-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: credentialResponse.credential })
     });
-    const [openDialog, setOpenDialog] = useState(false);
-
-    const {email,password} = values;
-
-    const handleSubmit = async (event)=>{
-        setValues({...values,loading:true});
-        event.preventDefault(); 
-        const body={ email:email, password:password };
-        const result = await postApi('signin',body);
-        const res=await result.json(); 
-        if(!result.ok){
-            setValues({...values,error:res?.error,loading:false})
-        }else{
-            setValues({...values,error:false,success:true,loading:false})
-            authentication(res);
-            navigate("/");
-        }
+    const data = await res.json();
+    if (data.token) {
+      setValues({ ...values, error: false, success: true, loading: false });
+      authentication(data);
+      navigate("/");
+    } else {
+      setValues({ ...values, error: data?.error, loading: false });
     }
+  };
 
-    const handleChange = name => event => {
-        setValues({...values,error:false,success:false,[name]:event.target.value});
-    }
-
-    const showError = () =>{
-        return (
-            values.error&&<Stack sx={{bgcolor:"red" ,padding:"10px"}}>{values.error}</Stack>
-        )
-    }
-
-    const showForm = () =>{ 
-        return (
-            <Box>
-            <form>
-            <Stack spacing={5}>
-                <TextField
-                    label="Email"
-                    value={email}
-                    onChange={handleChange('email')}
-                />
-                <TextField
-                    label="Password"
-                    type="password"
-                    value={password}
-                    onChange={handleChange('password')}
-                />
-                <Button variant="outlined" type="submit" onClick={handleSubmit} color="success">Signin</Button>
-                <Stack>Not Registered? <Link to="/Signup">SignUp</Link></Stack>
-                <Button variant="contained" color="black" onClick={() => setOpenDialog(true)}>
-                    Show Demo Credentials
-                </Button>
-            </Stack>
-            </form>
-            </Box>
-        )
-    }
-
-    const handleSuccess = async (credentialResponse) => {
-        const res = await fetch(`${API}api/google-login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: credentialResponse.credential })
-        });
-        const data = await res.json();
-        if (data.token) {
-            setValues({...values,error:false,success:true,loading:false})
-            authentication(data);
-            navigate("/")
-        } else {
-            setValues({...values,error:data?.error,loading:false})
-        }
-    }
-
-    return (
-    <Stack
-      // height="100vh"
+  return (
+    <Box
       sx={{
-        padding: { xs: '20px', md: '60px' },
-        background: 'linear-gradient(135deg, #E0F7FA, #FFFFFF)',
-        justifyContent: 'center',
-        alignItems: 'center',
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(to bottom right, #e6f0ff, #ffffff)",
+        px: 2,
       }}
     >
-      {values.loading && (
-        <div className="loader-overlay">
-          <div className="gradient-spinner">
-            <div className="gradient-spinner-inner"></div>
-          </div>
-          <div className="particles-container">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="particle"></div>
-            ))}
-          </div>
-        </div>
-      )}
-
       <Paper
-        elevation={6}
+        elevation={3}
         sx={{
-          borderRadius: '20px',
-          padding: { xs: 3, md: 5 },
-          maxWidth: '1050px',
-          width: '100%',
-          background: '#FFFFFFDD',
-          backdropFilter: 'blur(8px)',
+          borderRadius: 4,
+          width: "100%",
+          maxWidth: 420,
+          p: 4,
+          backgroundColor: "#fff",
         }}
       >
-        <Grid container spacing={9} alignItems="center">
-          <Grid item size={{ xs: "12", sm: "12", md: "3", lg: "4" }}>
-            <Stack spacing={3}>
-              <Typography variant="h4" fontWeight="bold" color="#0D47A1">
-                Welcome Back!
-              </Typography>
-              {showError()}
-              {showForm()}
-              <Typography variant="body2" textAlign="center" color="gray">
-                Or continue with
-              </Typography>
-              <Stack direction="column" spacing={1.5}>
-                <GoogleLogin
-                  onSuccess={handleSuccess}
-                  onError={() => console.log('Login Failed')}
-                />
-              </Stack>
-            </Stack>
-          </Grid>
-          <Grid item size={{ xs: "12", sm: "12", md: "6", lg: "8" }}>
-            <img
-              src={bookBecho}
-              alt="Login Illustration"
-              style={{
-                width: '100%',
-                borderRadius: '20px',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                objectFit: 'cover',
-                maxHeight: '400px',
-              }}
-            />
-          </Grid>
-        </Grid>
+        <Stack spacing={3} alignItems="center">
+          <img src={bookBecho} alt="BookMart Logo" style={{ width: 70 }} />
+          <Typography variant="h5" fontWeight="bold" color="primary">
+            BookMart
+          </Typography>
+          <Typography variant="h6" fontWeight={600}>
+            Login
+          </Typography>
+
+          {values.error && (
+            <Typography color="error" textAlign="center">
+              {values.error}
+            </Typography>
+          )}
+
+          <TextField
+            fullWidth
+            label="Email address"
+            variant="outlined"
+            value={email}
+            onChange={handleChange("email")}
+          />
+          <TextField
+            fullWidth
+            label="Password"
+            type="password"
+            variant="outlined"
+            value={password}
+            onChange={handleChange("password")}
+          />
+
+          <Box width="100%" display="flex" justifyContent="space-between">
+            <Typography variant="body2">
+              Not Registered? <Link to="/Signup">Sign up</Link>
+            </Typography>
+            <Link to="/forgot-password" style={{ fontSize: "14px" }}>
+              Forgot password?
+            </Link>
+          </Box>
+
+          <Button
+            variant="contained"
+            size="large"
+            fullWidth
+            sx={{ borderRadius: "10px", mt: 1 }}
+            onClick={handleSubmit}
+          >
+            Log in
+          </Button>
+
+          <Typography variant="body2" color="text.secondary">
+            Or continue with
+          </Typography>
+
+          <GoogleLogin
+            onSuccess={handleSuccess}
+            onError={() => console.log("Google login failed")}
+          />
+
+          <Button
+            variant="text"
+            onClick={() => setOpenDialog(true)}
+            sx={{ fontSize: "0.9rem", textTransform: "none" }}
+          >
+            Show Demo Credentials
+          </Button>
+        </Stack>
       </Paper>
 
+      {/* Demo Credentials Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Demo Login Credentials</DialogTitle>
         <DialogContent>
           <Typography variant="body1"><strong>Admin User</strong></Typography>
           <Typography>Email: <code>satyammishra@gmail.com</code></Typography>
-          <Typography>Password: <code>Satyam@1('s' is in uppercaseletter)</code></Typography>
+          <Typography>Password: <code>Satyam@1</code></Typography>
           <Typography variant="body1"><strong>Regular User</strong></Typography>
           <Typography>Email: <code>satyam.myname0702@gmail.com</code></Typography>
-          <Typography>Password: <code>Satyam@1('s' is in uppercaseletter)</code></Typography>
+          <Typography>Password: <code>Satyam@1</code></Typography>
         </DialogContent>
       </Dialog>
-    </Stack>
+    </Box>
   );
 }

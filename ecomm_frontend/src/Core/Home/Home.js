@@ -13,6 +13,7 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
+import Chatbot from "../ChatBot/bot.js";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from '../../Common/ThemeContext/ThemeContext';
 import Card from "./Cards";
@@ -247,6 +248,7 @@ export default function Home() {
             </Grid>
           )}
         </Grid>
+        <Box><Chatbot/></Box>
       </Box>
     </Box>
   )
