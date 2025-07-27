@@ -16,7 +16,7 @@ const Footer = () => (
   >
     <Stack spacing={1}>
       <Typography variant="h6" sx={{ fontWeight: 'bold', letterSpacing: 1 }}>
-        BookBecho
+        Book Mart
       </Typography>
       <Typography variant="body2" sx={{ opacity: 0.85 }}>
         Your trusted marketplace for buying books.
@@ -30,13 +30,11 @@ const Footer = () => (
         }}
       />
       <Typography variant="body2" sx={{ opacity: 0.75 }}>
-        Contact: <a href="mailto:support@bookbecho.com" style={{ color: '#ffffff', textDecoration: 'underline' }}>
-          support@bookbecho.com
-        </a>{' '}
+        Contact: 
         | +917482990927
       </Typography>
       <Typography variant="caption" sx={{ opacity: 0.5 }}>
-        &copy; {new Date().getFullYear()} Book Becho. All Rights Reserved.
+        &copy; {new Date().getFullYear()} Book MART. All Rights Reserved.
       </Typography>
     </Stack>
   </Box>
