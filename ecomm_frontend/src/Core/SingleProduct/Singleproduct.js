@@ -7,11 +7,10 @@ import { useLocation } from "react-router-dom";
 import Card from "../Home/Cards";
 import { AddItem } from "../Cart/AddItem";
 import { ThemeContext } from '../../Common/ThemeContext/ThemeContext';
-
+import { isAuthenticated } from "../../Common/auth/auth";
 export default function SingleProduct() {
     const { SnackBar, toggleSnackBar } = useContext(ThemeContext);
     const productId = useLocation().pathname.split("/")[2];
-
     const [product, setProduct] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -88,7 +87,7 @@ export default function SingleProduct() {
                         <Typography variant="h5" color="primary" fontWeight="600">${product?.price || "20"}</Typography>
                         <Typography variant="body2">Category: {product?.category?.name || "Uncategorized"}</Typography>
                         {StockBadge(product?.quantity)}
-                        <Stack direction="row" spacing={2} mt={2}>
+                        {(JSON.parse(isAuthenticated())==false||JSON.parse(isAuthenticated())?.user?.role === 0)&&<Stack direction="row" spacing={2} mt={2}>
                             <Button
                                 variant="contained"
                                 color="success"
@@ -101,7 +100,7 @@ export default function SingleProduct() {
                             >
                                 Add to Cart
                             </Button>
-                        </Stack>
+                        </Stack>}
                     </Stack>
                 </Grid>
             </Grid>

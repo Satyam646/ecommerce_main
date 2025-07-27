@@ -122,7 +122,7 @@ const SearchBar = () => {
         >
           {/* Logo and Nav */}
           <Stack direction="row" alignItems="center" spacing={4} sx={{ flexWrap: 'wrap' }}>
-            <Box component="img" src={bookBecho} alt="BookBecho" sx={{ height: 40, width: 120 }} />
+            <Box component="img" src={bookBecho} alt="BookBecho" sx={{ height: 50, width: 80 }} />
   
             <Stack direction="row" spacing={3}>
               {[
@@ -134,7 +134,6 @@ const SearchBar = () => {
                     variant="subtitle1"
                     sx={{
                       position: 'relative',
-                      
                       color: isActive(location, link.path),
                       '&::after': {
                         content: '""',
@@ -160,7 +159,7 @@ const SearchBar = () => {
   
           {/* Search, Cart, Account */}
           <Stack direction="row" spacing={2} alignItems="center" mt={{ xs: 1, md: 0 }}>
-            {SearchBar()}
+            {location.pathname=="/"&&SearchBar()}
             {(JSON.parse(isAuthenticated())==false||JSON.parse(isAuthenticated())?.user?.role === 0)&&<Link to="/Cart" style={LinkStyle}>
               <Badge badgeContent={itemTotal()} color="error">
                 <ShoppingCartIcon
