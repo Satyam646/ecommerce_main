@@ -220,7 +220,6 @@ export default function Cart() {
                         </Stack>
                     </Grid>
                 </Grid>
-
             )}
         </Stack>
     );

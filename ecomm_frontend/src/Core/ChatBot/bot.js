@@ -74,15 +74,18 @@ const Chatbot = () => {
       {/* Floating Label */}
       <Typography
         sx={{
-          borderRadius: "5px",
+          borderRadius: 1,
           position: 'fixed',
-          bottom: 85,
-          right: 30,
+          bottom: { xs: 80, sm: 85 },
+          right: { xs: 20, sm: 30 },
           backgroundColor: '#4B6BFB',
           color: 'white',
-          padding: "2px 8px",
+          px: 1.5,
+          py: 0.5,
           fontWeight: 500,
-          boxShadow: '0px 2px 6px rgba(0,0,0,0.2)',
+          fontSize: { xs: 12, sm: 14 },
+          zIndex: 1500,
+          boxShadow: 2,
           '&:hover': { backgroundColor: '#3A56CC' },
         }}
       >
@@ -94,12 +97,15 @@ const Chatbot = () => {
         onClick={() => setOpen(true)}
         sx={{
           position: 'fixed',
-          bottom: 24,
-          right: 24,
+          bottom: { xs: 16, sm: 24 },
+          right: { xs: 16, sm: 24 },
           background: 'linear-gradient(135deg, #4B6BFB 0%, #3A56CC 100%)',
           color: 'white',
-          '&:hover': { background: 'linear-gradient(135deg, #3A56CC 0%, #2C43A6 100%)' },
-          boxShadow: '0px 4px 12px rgba(0,0,0,0.3)',
+          zIndex: 1500,
+          '&:hover': {
+            background: 'linear-gradient(135deg, #3A56CC 0%, #2C43A6 100%)',
+          },
+          boxShadow: 4,
         }}
       >
         <ChatIcon />
@@ -111,17 +117,18 @@ const Chatbot = () => {
           elevation={10}
           sx={{
             position: 'fixed',
-            bottom: 90,
-            right: 24,
-            width: 380,
-            height: 560,
+            bottom: { xs: 70, sm: 90 },
+            right: { xs: 8, sm: 24 },
+            width: { xs: '92vw', sm: 380 },
+            height: { xs: '70vh', sm: 560 },
             display: 'flex',
             flexDirection: 'column',
-            borderRadius: 4,
+            borderRadius: 3,
             overflow: 'hidden',
             backdropFilter: 'blur(12px)',
             backgroundColor: 'rgba(255,255,255,0.9)',
             boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+            zIndex: 1500,
           }}
         >
           {/* Header */}
@@ -158,6 +165,7 @@ const Chatbot = () => {
                     px: 2,
                     py: 1,
                     borderRadius: 2,
+                    fontSize: { xs: '0.85rem', sm: '0.95rem' },
                     bgcolor: msg.sender === 'user' ? '#4B6BFB' : 'white',
                     color: msg.sender === 'user' ? 'white' : 'black',
                     maxWidth: '80%',
@@ -210,7 +218,7 @@ const Chatbot = () => {
             <div ref={chatRef} />
           </Box>
 
-          {/* Input */}
+          {/* Input Field */}
           <Box sx={{ display: 'flex', borderTop: '1px solid #ccc', p: 1, bgcolor: 'white' }}>
             <TextField
               fullWidth

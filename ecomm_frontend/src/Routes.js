@@ -18,7 +18,8 @@ import Orders from "./Admin/order";
 import Profile from "./user/Profile";
 import ManageProducts from "./Admin/ManageProduct";
 import UpdateProduct from "./Admin/UpdateProduct";
-import  Footer  from "./Core/Footer/Footer";
+import Footer  from "./Core/Footer/Footer";
+import SalesDashboard from "./Core/SalesTracking/SalesDashboard"; 
 export default function Path() {
   // const [user, setUser] = useState(null); // Initialize to null or some default value
   // useEffect(() => {
@@ -119,6 +120,7 @@ export default function Path() {
         <Route path="/product/:productId" element={<SingleProduct/>} />
         <Route path='/signin' element={<Signin />} />
         <Route path='/Signup' element={<Signup />} />
+        <Route path='/SalesDashboard' element={<SalesDashboard />} />
       </Routes>
       <Footer/>
     </BrowserRouter>
