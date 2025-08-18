@@ -26,13 +26,11 @@ export default function UserDashboard() {
     const { user, token } = JSON.parse(isAuthenticated());
     const [history, setHistory] = useState([]);
     const navigate = useNavigate();
-
     useEffect(() => {
         purchaseItem(user?._id, token).then(data => {
             if (!data?.error) setHistory(data);
         });
     }, [user?._id, token]);
-
     const Sidebar = () => (
         <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
             <Stack spacing={2} alignItems="center">
@@ -55,7 +53,6 @@ export default function UserDashboard() {
             </List>
         </Paper>
     );
-
     const UserInfo = () => (
         <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
             <Stack spacing={2}>
@@ -69,7 +66,6 @@ export default function UserDashboard() {
             </Stack>
         </Paper>
     );
-
     const PurchaseHistory = () => (
         <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>Purchase History</Typography>
@@ -91,7 +87,6 @@ export default function UserDashboard() {
             )}
         </Paper>
     );
-
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
             <Grid container spacing={3}>

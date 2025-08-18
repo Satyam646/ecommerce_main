@@ -12,6 +12,7 @@ const  userrouter=require("./routes/user");
 const  productRoutes=require("./routes/product");
 const  categoryRoutes=require("./routes/category");
 const  brainTreeRoutes = require("./routes/Braintree");
+const SalesTracking = require("./routes/SalesTracking");
 const Bot = require("./routes/ChatBot")
 const orders = require('./routes/order')
 const app=express();
@@ -34,6 +35,7 @@ app.use('/',categoryRoutes);
 app.use('/',productRoutes);
 app.use("/",brainTreeRoutes);
 app.use("/",orders);
+app.use("/",SalesTracking);
 app.use("/",Bot);
 const port=process.env.PORT||8080;
 app.listen(port,()=>{

@@ -2,9 +2,9 @@
 import './App.css';
 import { useState } from 'react';
 
+
 function App() {
   const [counter,setcounter] = useState(0); // use state hook returns two value setcounter function that updates the state and counter which is state
-  
   return (
     <div>
       <div>Counter App</div>
@@ -16,5 +16,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;

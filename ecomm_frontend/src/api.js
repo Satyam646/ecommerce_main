@@ -7,6 +7,7 @@ export const getApi = (path) =>{
         return response.json();
     }).catch(err => console.log(err));   
 }
+
 export const getApiAuth = (path,Auth) =>{
     return fetch(`${API}${path}`,{
         method:"GET",
@@ -18,6 +19,7 @@ export const getApiAuth = (path,Auth) =>{
         return response.json();
     }).catch(err => console.log(err));   
 }
+
 export const postProductApi = (path,body) =>{
     return fetch(`${API}${path}`,{
         method:"POST",
@@ -29,6 +31,7 @@ export const postProductApi = (path,body) =>{
         return response.json();
     }).catch(err => console.log(err));   
 }
+
 export async function postFormData(path,body,Auth){
     const response = await fetch(`${API}${path}`, {
         method: 'POST',
@@ -47,6 +50,7 @@ export async function postFormData(path,body,Auth){
     // console.log('Data posted successfully:', result);
     return result; // Return the parsed result
 }
+
 export async function putFormData(path,body,Auth){
     const response = await fetch(`${API}${path}`, {
         method: 'PUT',
@@ -65,6 +69,7 @@ export async function putFormData(path,body,Auth){
     // console.log('Data posted successfully:', result);
     return result; // Return the parsed result
 }
+
 export async function postAuthApi(path,body,Auth){
     const response = await fetch(`${API}${path}`, {
         method: 'POST',
@@ -99,6 +104,7 @@ export async function postApi(path,body){
         // console.log('Data posted successfully:', result);
         return result; // Return the parsed result
 }
+
 export const updateOrderStatus = (userId,token,orderId,status) =>{
     return fetch(`${API}order/${orderId}/status/${userId}`,{
         method:"PUT",

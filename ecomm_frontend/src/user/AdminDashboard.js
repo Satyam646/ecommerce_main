@@ -7,6 +7,7 @@ import FilterFramesIcon from '@mui/icons-material/FilterFrames';
 import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { signout, isAuthenticated } from "../Common/auth/auth";
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 export default function AdminDashboard() {
     const { user } = JSON.parse(isAuthenticated());
@@ -27,6 +28,10 @@ export default function AdminDashboard() {
                     <ListItemIcon><PersonIcon /></ListItemIcon>
                     <ListItemText primary="Update Profile" />
                 </ListItem>
+                 <ListItem button onClick={() => navigate(`/SalesDashboard`)}>
+                    <ListItemIcon><BarChartIcon /></ListItemIcon>
+                    <ListItemText primary="SalesDashBoard" />
+                </ListItem>
                 <ListItem button onClick={() => navigate('/admin/AddProduct')}>
                     <ListItemIcon><InventoryIcon /></ListItemIcon>
                     <ListItemText primary="Create Product" />
@@ -46,6 +51,7 @@ export default function AdminDashboard() {
             </List>
         </Paper>
     );
+
 
     const UserInfo = () => (
         <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
